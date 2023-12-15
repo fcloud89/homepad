@@ -43,7 +43,7 @@ public:
     options_.AddWithoutValue("fullscreen", "f", "Always full-screen display",
                              false);
     options_.AddInt("width", "w", "Window width", 1920, false);
-    options_.AddInt("height", "h", "Window height", 1280, false);
+    options_.AddInt("height", "h", "Window height", 1080, false);
 #else // FLUTTER_TARGET_BACKEND_WAYLAND
     options_.AddString("title", "t", "Window title", "Flutter", false);
     options_.AddString("app-id", "a", "XDG App ID", "dev.flutter.elinux",

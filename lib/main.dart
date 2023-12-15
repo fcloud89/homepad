@@ -1,3 +1,4 @@
+import 'package:bot_toast/bot_toast.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_neumorphic_plus/flutter_neumorphic.dart';
 import 'package:responsive_builder/responsive_builder.dart';
@@ -16,8 +17,14 @@ class MyApp extends StatelessWidget {
       title: 'Flutter Demo',
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+        primaryColor: const Color(0xFF3a828b),
+        primaryColorDark: const Color(0xFF1f252c),
+        scaffoldBackgroundColor: const Color(0xffffffff),
         platform: TargetPlatform.iOS,
+        visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
+      builder: BotToastInit(),
+      navigatorObservers: [BotToastNavigatorObserver()],
       home: ScreenTypeLayout(
         mobile: OrientationLayoutBuilder(
           portrait: (context) => Container(color: Colors.amber),

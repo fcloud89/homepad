@@ -151,7 +151,7 @@ class _DrawerUserControllerState extends State<DrawerUserController>
                           },
                         ),
                       Padding(
-                        padding: EdgeInsets.only(top: 72, left: 50),
+                        padding: EdgeInsets.only(top: 50, left: 50),
                         child: NeumorphicButton(
                           padding: const EdgeInsets.all(14),
                           style: const NeumorphicStyle(
@@ -172,32 +172,6 @@ class _DrawerUserControllerState extends State<DrawerUserController>
                             onDrawerClick();
                           },
                         ),
-                        // SizedBox(
-                        //   width: AppBar().preferredSize.height - 8,
-                        //   height: AppBar().preferredSize.height - 8,
-                        //   child: Material(
-                        //     color: Colors.transparent,
-                        //     child: InkWell(
-                        //       borderRadius: BorderRadius.circular(
-                        //           AppBar().preferredSize.height),
-                        //       child: Center(
-                        //         child: widget.menuView ??
-                        //             AnimatedIcon(
-                        //                 color: isLightMode
-                        //                     ? AppTheme.dark_grey
-                        //                     : AppTheme.white,
-                        //                 icon: widget.animatedIconData ??
-                        //                     AnimatedIcons.arrow_menu,
-                        //                 progress: iconAnimationController!),
-                        //       ),
-                        //       onTap: () {
-                        //         FocusScope.of(context)
-                        //             .requestFocus(FocusNode());
-                        //         onDrawerClick();
-                        //       },
-                        //     ),
-                        //   ),
-                        // ),
                       ),
                     ],
                   ),
