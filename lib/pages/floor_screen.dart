@@ -45,12 +45,16 @@ class _MyFloorPage extends StatefulWidget {
   State<_MyFloorPage> createState() => _MyFloorPageState();
 }
 
-class _MyFloorPageState extends State<_MyFloorPage> {
+class _MyFloorPageState extends State<_MyFloorPage>
+    with TickerProviderStateMixin {
+  AnimationController? animationController;
   final items = List<String>.generate(20, (i) => 'Item ${i + 1}');
 
   @override
   void initState() {
     super.initState();
+    animationController = AnimationController(
+        duration: const Duration(milliseconds: 1000), vsync: this);
   }
 
   @override
@@ -89,16 +93,32 @@ class _MyFloorPageState extends State<_MyFloorPage> {
                           style: TextStyle(color: Colors.black87, fontSize: 24),
                         ),
                         Expanded(
-                            child: Container(
-                          padding: const EdgeInsets.symmetric(
-                              vertical: 20, horizontal: 10),
-                          child: ListView.builder(
-                            itemCount: 50,
-                            itemBuilder: (BuildContext context, int index) {
-                              return buildItem(index);
-                            },
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                                vertical: 20, horizontal: 10),
+                            child: ListView.builder(
+                              itemCount: items.length,
+                              scrollDirection: Axis.vertical,
+                              itemBuilder: (BuildContext context, int index) {
+                                final int count = items.length;
+                                final Animation<double> animation =
+                                    Tween<double>(begin: 0.0, end: 1.0).animate(
+                                        CurvedAnimation(
+                                            parent: animationController!,
+                                            curve: Interval(
+                                                (1 / count) * index, 1.0,
+                                                curve: Curves.fastOutSlowIn)));
+                                animationController?.forward();
+                                return FloorListView(
+                                  animation: animation,
+                                  animationController: animationController!,
+                                  callBack: () {},
+                                  listData: items[index],
+                                );
+                              },
+                            ),
                           ),
-                        )),
+                        ),
                       ],
                     ),
                   )),
@@ -205,59 +225,43 @@ class _MyFloorPageState extends State<_MyFloorPage> {
       ),
     );
   }
+}
 
-  Widget buildItem(int index) {
-    return Slidable(
-      key: const ValueKey(0),
-      // startActionPane: ActionPane(
-      //   motion: const ScrollMotion(),
-      //   // dismissible: DismissiblePane(onDismissed: () {}),
-      //   children: [
-      //     SlidableAction(
-      //       onPressed: (BuildContext context) {},
-      //       backgroundColor: const Color(0xFFFE4A49),
-      //       foregroundColor: Colors.white,
-      //       icon: Icons.delete,
-      //       label: 'Delete',
-      //     ),
-      //     SlidableAction(
-      //       onPressed: (BuildContext context) {},
-      //       backgroundColor: const Color(0xFF21B7CA),
-      //       foregroundColor: Colors.white,
-      //       icon: Icons.share,
-      //       label: 'Share',
-      //     ),
-      //   ],
-      // ),
-      // endActionPane: ActionPane(
-      //   motion: const ScrollMotion(),
-      //   children: [
-      //     SlidableAction(
-      //       // An action can be bigger than the others.
-      //       flex: 2,
-      //       onPressed: (BuildContext context) {},
-      //       backgroundColor: const Color(0xFF7BC043),
-      //       foregroundColor: Colors.white,
-      //       icon: Icons.archive,
-      //       label: 'Archive',
-      //     ),
-      //     SlidableAction(
-      //       onPressed: (BuildContext context) {},
-      //       backgroundColor: const Color(0xFF0392CF),
-      //       foregroundColor: Colors.white,
-      //       icon: Icons.save,
-      //       label: 'Save',
-      //     ),
-      //   ],
-      // ),
-      child: buildContainer(index),
+class FloorListView extends StatelessWidget {
+  const FloorListView(
+      {Key? key,
+      this.listData,
+      this.callBack,
+      this.animationController,
+      this.animation})
+      : super(key: key);
+
+  final dynamic? listData;
+  final VoidCallback? callBack;
+  final AnimationController? animationController;
+  final Animation<double>? animation;
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedBuilder(
+      animation: animationController!,
+      builder: (BuildContext bct, Widget? child) {
+        return FadeTransition(
+          opacity: animation!,
+          child: Transform(
+            transform: Matrix4.translationValues(
+                0.0, 50 * (1.0 - animation!.value), 0.0),
+            child: btns(bct, listData),
+          ),
+        );
+      },
     );
   }
 
-  Widget buildContainer(index) {
+  Widget btns(BuildContext bct, dynamic? listData) {
     return GestureDetector(
       onTap: () {
-        print("$index");
+        callBack?.call();
       },
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 20),

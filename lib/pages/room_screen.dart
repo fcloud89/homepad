@@ -47,13 +47,17 @@ class _MyRoomPage extends StatefulWidget {
   State<_MyRoomPage> createState() => _MyRoomPageState();
 }
 
-class _MyRoomPageState extends State<_MyRoomPage> {
+class _MyRoomPageState extends State<_MyRoomPage>
+    with TickerProviderStateMixin {
+  AnimationController? animationController;
   final items = List<String>.generate(20, (i) => 'Item ${i + 1}');
   List testList = ["floor 1", "floor 2", "floor 3", "floor 4", "floor 5"];
 
   @override
   void initState() {
     super.initState();
+    animationController = AnimationController(
+        duration: const Duration(milliseconds: 1000), vsync: this);
   }
 
   @override
@@ -96,9 +100,24 @@ class _MyRoomPageState extends State<_MyRoomPage> {
                           padding: const EdgeInsets.symmetric(
                               vertical: 20, horizontal: 10),
                           child: ListView.builder(
-                            itemCount: 50,
+                            itemCount: items.length,
+                            scrollDirection: Axis.vertical,
                             itemBuilder: (BuildContext context, int index) {
-                              return buildItem(index);
+                              final int count = items.length;
+                              final Animation<double> animation =
+                                  Tween<double>(begin: 0.0, end: 1.0).animate(
+                                      CurvedAnimation(
+                                          parent: animationController!,
+                                          curve: Interval(
+                                              (1 / count) * index, 1.0,
+                                              curve: Curves.fastOutSlowIn)));
+                              animationController?.forward();
+                              return RoomListView(
+                                animation: animation,
+                                animationController: animationController!,
+                                callBack: () {},
+                                listData: items[index],
+                              );
                             },
                           ),
                         )),
@@ -275,101 +294,6 @@ class _MyRoomPageState extends State<_MyRoomPage> {
     );
   }
 
-  Widget buildItem(int index) {
-    return Slidable(
-      key: const ValueKey(0),
-      // startActionPane: ActionPane(
-      //   motion: const ScrollMotion(),
-      //   // dismissible: DismissiblePane(onDismissed: () {}),
-      //   children: [
-      //     SlidableAction(
-      //       onPressed: (BuildContext context) {},
-      //       backgroundColor: const Color(0xFFFE4A49),
-      //       foregroundColor: Colors.white,
-      //       icon: Icons.delete,
-      //       label: 'Delete',
-      //     ),
-      //     SlidableAction(
-      //       onPressed: (BuildContext context) {},
-      //       backgroundColor: const Color(0xFF21B7CA),
-      //       foregroundColor: Colors.white,
-      //       icon: Icons.share,
-      //       label: 'Share',
-      //     ),
-      //   ],
-      // ),
-      // endActionPane: ActionPane(
-      //   motion: const ScrollMotion(),
-      //   children: [
-      //     SlidableAction(
-      //       // An action can be bigger than the others.
-      //       flex: 2,
-      //       onPressed: (BuildContext context) {},
-      //       backgroundColor: const Color(0xFF7BC043),
-      //       foregroundColor: Colors.white,
-      //       icon: Icons.archive,
-      //       label: 'Archive',
-      //     ),
-      //     SlidableAction(
-      //       onPressed: (BuildContext context) {},
-      //       backgroundColor: const Color(0xFF0392CF),
-      //       foregroundColor: Colors.white,
-      //       icon: Icons.save,
-      //       label: 'Save',
-      //     ),
-      //   ],
-      // ),
-      child: buildContainer(index),
-    );
-  }
-
-  Widget buildContainer(index) {
-    return GestureDetector(
-      onTap: () {
-        print("$index");
-      },
-      child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 20),
-        margin: const EdgeInsets.only(bottom: 20),
-        decoration: const BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.all(Radius.circular(16)),
-        ),
-        child: Row(
-          children: [
-            SvgPicture.asset(
-              "assets/ic_room.svg",
-              width: 40,
-              height: 40,
-              colorFilter: const ColorFilter.mode(
-                  Color.fromARGB(255, 202, 97, 4), BlendMode.srcIn),
-            ),
-            const SizedBox(width: 16),
-            const Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    "早起的年轻人",
-                    style: TextStyle(
-                        fontSize: 20, fontWeight: FontWeight.w500, height: 2),
-                  ),
-                  Text(
-                    "一个爱写代码 的程序员 也会早起那么一点点",
-                    style: TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w400,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
   Widget getListWidget(list) {
     return Scrollbar(
       child: ListView.builder(
@@ -405,6 +329,85 @@ class _MyRoomPageState extends State<_MyRoomPage> {
           );
         },
         itemCount: list.length,
+      ),
+    );
+  }
+}
+
+class RoomListView extends StatelessWidget {
+  const RoomListView(
+      {Key? key,
+      this.listData,
+      this.callBack,
+      this.animationController,
+      this.animation})
+      : super(key: key);
+
+  final dynamic? listData;
+  final VoidCallback? callBack;
+  final AnimationController? animationController;
+  final Animation<double>? animation;
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedBuilder(
+      animation: animationController!,
+      builder: (BuildContext bct, Widget? child) {
+        return FadeTransition(
+          opacity: animation!,
+          child: Transform(
+            transform: Matrix4.translationValues(
+                0.0, 50 * (1.0 - animation!.value), 0.0),
+            child: btns(bct, listData),
+          ),
+        );
+      },
+    );
+  }
+
+  Widget btns(BuildContext bct, dynamic? listData) {
+    return GestureDetector(
+      onTap: () {
+        callBack?.call();
+      },
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 20),
+        margin: const EdgeInsets.only(bottom: 20),
+        decoration: const BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.all(Radius.circular(16)),
+        ),
+        child: Row(
+          children: [
+            SvgPicture.asset(
+              "assets/ic_floor.svg",
+              width: 40,
+              height: 40,
+              colorFilter: const ColorFilter.mode(
+                  Color.fromARGB(255, 202, 97, 4), BlendMode.srcIn),
+            ),
+            const SizedBox(width: 16),
+            const Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    "早起的年轻人",
+                    style: TextStyle(
+                        fontSize: 20, fontWeight: FontWeight.w500, height: 2),
+                  ),
+                  Text(
+                    "一个爱写代码 的程序员 也会早起那么一点点",
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w400,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
