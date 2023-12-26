@@ -3,7 +3,6 @@ import 'dart:ui';
 
 import 'package:bot_toast/bot_toast.dart';
 import 'package:flutter_neumorphic_plus/flutter_neumorphic.dart';
-import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:homepad/utils/SizeUtils.dart';
 import 'package:homepad/widgets/MTextField.dart';
@@ -11,7 +10,7 @@ import 'package:homepad/widgets/WLine.dart';
 import 'package:homepad/widgets/WPopupWindow.dart';
 import 'package:homepad/widgets/back_button.dart';
 
-class MyRoomPage extends StatelessWidget {
+class MyDevicePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return NeumorphicTheme(
@@ -33,27 +32,31 @@ class MyRoomPage extends StatelessWidget {
               fit: BoxFit.fill,
             ),
           ),
-          child: const _MyRoomPage(),
+          child: const _MyDevicePage(),
         )),
       ),
     );
   }
 }
 
-class _MyRoomPage extends StatefulWidget {
-  const _MyRoomPage();
+class _MyDevicePage extends StatefulWidget {
+  const _MyDevicePage();
 
   @override
-  State<_MyRoomPage> createState() => _MyRoomPageState();
+  State<_MyDevicePage> createState() => _MyDevicePageState();
 }
 
-class _MyRoomPageState extends State<_MyRoomPage> {
-  final items = List<String>.generate(20, (i) => 'Item ${i + 1}');
-  List testList = ["floor 1", "floor 2", "floor 3", "floor 4", "floor 5"];
+class _MyDevicePageState extends State<_MyDevicePage>
+    with TickerProviderStateMixin {
+  final items = List<String>.generate(20, (i) => 'camera ${i + 1}');
+  List testList = ["room 1", "room 2", "room 3", "room 4", "room 5"];
+  AnimationController? animationController;
 
   @override
   void initState() {
     super.initState();
+    animationController = AnimationController(
+        duration: const Duration(milliseconds: 1000), vsync: this);
   }
 
   @override
@@ -81,27 +84,55 @@ class _MyRoomPageState extends State<_MyRoomPage> {
                   filter: ImageFilter.blur(sigmaX: 5.0, sigmaY: 5.0),
                   child: Container(
                     padding: const EdgeInsets.symmetric(
-                        horizontal: 20, vertical: 20),
+                        horizontal: 10, vertical: 20),
                     decoration: BoxDecoration(
                         color: Colors.black87.withOpacity(0.1),
                         borderRadius: BorderRadius.circular(16)),
                     child: Column(
                       children: [
                         const Text(
-                          "Room list",
+                          "Device list",
                           style: TextStyle(color: Colors.black87, fontSize: 24),
                         ),
                         Expanded(
-                            child: Container(
-                          padding: const EdgeInsets.symmetric(
-                              vertical: 20, horizontal: 10),
-                          child: ListView.builder(
-                            itemCount: 50,
-                            itemBuilder: (BuildContext context, int index) {
-                              return buildItem(index);
-                            },
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                                vertical: 20, horizontal: 10),
+                            child: GridView(
+                              physics: const BouncingScrollPhysics(),
+                              scrollDirection: Axis.vertical,
+                              gridDelegate:
+                                  const SliverGridDelegateWithFixedCrossAxisCount(
+                                crossAxisCount: 2,
+                                mainAxisSpacing: 0.0,
+                                crossAxisSpacing: 0.0,
+                                childAspectRatio: 16 / 9,
+                              ),
+                              children: List<Widget>.generate(
+                                items.length,
+                                (int index) {
+                                  final int count = items.length;
+                                  final Animation<double> animation =
+                                      Tween<double>(begin: 0.0, end: 1.0)
+                                          .animate(
+                                    CurvedAnimation(
+                                      parent: animationController!,
+                                      curve: Interval((1 / count) * index, 1.0,
+                                          curve: Curves.fastOutSlowIn),
+                                    ),
+                                  );
+                                  animationController?.forward();
+                                  return HomeListView(
+                                    animation: animation,
+                                    animationController: animationController,
+                                    listData: items[index],
+                                    callBack: () {},
+                                  );
+                                },
+                              ),
+                            ),
                           ),
-                        )),
+                        ),
                       ],
                     ),
                   )),
@@ -126,7 +157,7 @@ class _MyRoomPageState extends State<_MyRoomPage> {
                           const Align(
                             alignment: Alignment.center,
                             child: Text(
-                              "Room info",
+                              "Device info",
                               style: TextStyle(
                                   color: Colors.black87, fontSize: 24),
                             ),
@@ -189,7 +220,7 @@ class _MyRoomPageState extends State<_MyRoomPage> {
                             padding: const EdgeInsets.symmetric(
                                 horizontal: 20.0, vertical: 12),
                             child: Text(
-                              "choose floor",
+                              "choose room",
                               style: TextStyle(
                                 fontWeight: FontWeight.w700,
                                 color:
@@ -218,7 +249,7 @@ class _MyRoomPageState extends State<_MyRoomPage> {
                                           EdgeInsets.symmetric(horizontal: 20),
                                       alignment: Alignment.centerLeft,
                                       child: const Text(
-                                        "Build No.1 Floor 1#",
+                                        "Build No.1 Floor #1 Room #34",
                                         style: TextStyle(
                                             color: Colors.grey, fontSize: 20),
                                       ),
@@ -250,7 +281,7 @@ class _MyRoomPageState extends State<_MyRoomPage> {
                       ),
                       SizedBox(height: 10),
                       MTextField(
-                        label: "Room name",
+                        label: "Device name",
                         hint: "",
                         onChanged: (firstName) {
                           log(firstName);
@@ -258,7 +289,7 @@ class _MyRoomPageState extends State<_MyRoomPage> {
                         },
                       ),
                       MTextField(
-                        label: "Room description",
+                        label: "Device description",
                         hint: "",
                         onChanged: (lastName) {
                           // setState(() {});
@@ -271,101 +302,6 @@ class _MyRoomPageState extends State<_MyRoomPage> {
             ),
           ),
         ],
-      ),
-    );
-  }
-
-  Widget buildItem(int index) {
-    return Slidable(
-      key: const ValueKey(0),
-      // startActionPane: ActionPane(
-      //   motion: const ScrollMotion(),
-      //   // dismissible: DismissiblePane(onDismissed: () {}),
-      //   children: [
-      //     SlidableAction(
-      //       onPressed: (BuildContext context) {},
-      //       backgroundColor: const Color(0xFFFE4A49),
-      //       foregroundColor: Colors.white,
-      //       icon: Icons.delete,
-      //       label: 'Delete',
-      //     ),
-      //     SlidableAction(
-      //       onPressed: (BuildContext context) {},
-      //       backgroundColor: const Color(0xFF21B7CA),
-      //       foregroundColor: Colors.white,
-      //       icon: Icons.share,
-      //       label: 'Share',
-      //     ),
-      //   ],
-      // ),
-      // endActionPane: ActionPane(
-      //   motion: const ScrollMotion(),
-      //   children: [
-      //     SlidableAction(
-      //       // An action can be bigger than the others.
-      //       flex: 2,
-      //       onPressed: (BuildContext context) {},
-      //       backgroundColor: const Color(0xFF7BC043),
-      //       foregroundColor: Colors.white,
-      //       icon: Icons.archive,
-      //       label: 'Archive',
-      //     ),
-      //     SlidableAction(
-      //       onPressed: (BuildContext context) {},
-      //       backgroundColor: const Color(0xFF0392CF),
-      //       foregroundColor: Colors.white,
-      //       icon: Icons.save,
-      //       label: 'Save',
-      //     ),
-      //   ],
-      // ),
-      child: buildContainer(index),
-    );
-  }
-
-  Widget buildContainer(index) {
-    return GestureDetector(
-      onTap: () {
-        print("$index");
-      },
-      child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 20),
-        margin: const EdgeInsets.only(bottom: 20),
-        decoration: const BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.all(Radius.circular(16)),
-        ),
-        child: Row(
-          children: [
-            SvgPicture.asset(
-              "assets/ic_room.svg",
-              width: 40,
-              height: 40,
-              colorFilter: const ColorFilter.mode(
-                  Color.fromARGB(255, 202, 97, 4), BlendMode.srcIn),
-            ),
-            const SizedBox(width: 16),
-            const Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    "早起的年轻人",
-                    style: TextStyle(
-                        fontSize: 20, fontWeight: FontWeight.w500, height: 2),
-                  ),
-                  Text(
-                    "一个爱写代码 的程序员 也会早起那么一点点",
-                    style: TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w400,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
       ),
     );
   }
@@ -406,6 +342,77 @@ class _MyRoomPageState extends State<_MyRoomPage> {
         },
         itemCount: list.length,
       ),
+    );
+  }
+}
+
+class HomeListView extends StatelessWidget {
+  const HomeListView(
+      {Key? key,
+      this.listData,
+      this.callBack,
+      this.animationController,
+      this.animation})
+      : super(key: key);
+
+  final dynamic? listData;
+  final VoidCallback? callBack;
+  final AnimationController? animationController;
+  final Animation<double>? animation;
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedBuilder(
+      animation: animationController!,
+      builder: (BuildContext bct, Widget? child) {
+        return FadeTransition(
+          opacity: animation!,
+          child: Transform(
+            transform: Matrix4.translationValues(
+                0.0, 50 * (1.0 - animation!.value), 0.0),
+            child: btns(bct, listData),
+          ),
+        );
+      },
+    );
+  }
+
+  Widget btns(BuildContext bct, dynamic? listData) {
+    return NeumorphicButton(
+      // padding: EdgeInsets.zero,
+      margin: EdgeInsets.all(20),
+      style: NeumorphicStyle(
+        boxShape: NeumorphicBoxShape.roundRect(
+          BorderRadius.circular(12),
+        ),
+        color: Colors.white.withOpacity(0.8),
+        shape: NeumorphicShape.flat,
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          SvgPicture.asset(
+            "assets/ic_camera.svg",
+            width: 80,
+            height: 80,
+            colorFilter: const ColorFilter.mode(
+                Color.fromARGB(255, 202, 97, 4), BlendMode.srcIn),
+          ),
+          Container(
+            margin: const EdgeInsets.only(left: 20, right: 20),
+            child: Text(
+              listData,
+              style: const TextStyle(
+                fontWeight: FontWeight.w600,
+                fontSize: 32,
+              ),
+            ),
+          )
+        ],
+      ),
+      onPressed: () {
+        callBack?.call();
+      },
     );
   }
 }

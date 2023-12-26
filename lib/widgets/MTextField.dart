@@ -1,18 +1,18 @@
 import 'package:flutter_neumorphic_plus/flutter_neumorphic.dart';
 
-class WTextField extends StatefulWidget {
+class MTextField extends StatefulWidget {
   final String label;
   final String hint;
 
   final ValueChanged<String>? onChanged;
 
-  WTextField({required this.label, required this.hint, this.onChanged});
+  MTextField({this.label = '', this.hint = '', this.onChanged});
 
   @override
   __TextFieldState createState() => __TextFieldState();
 }
 
-class __TextFieldState extends State<WTextField> {
+class __TextFieldState extends State<MTextField> {
   late TextEditingController _controller;
 
   @override
@@ -27,26 +27,28 @@ class __TextFieldState extends State<WTextField> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
         Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 8),
+          padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 12),
           child: Text(
-            this.widget.label,
+            widget.label,
             style: TextStyle(
               fontWeight: FontWeight.w700,
               color: NeumorphicTheme.defaultTextColor(context),
+              fontSize: 20,
             ),
           ),
         ),
         Neumorphic(
-          margin: EdgeInsets.only(left: 8, right: 8, top: 2, bottom: 4),
+          margin: const EdgeInsets.only(left: 12, right: 12, top: 2, bottom: 4),
           style: NeumorphicStyle(
             depth: NeumorphicTheme.embossDepth(context),
-            boxShape: NeumorphicBoxShape.stadium(),
+            boxShape: const NeumorphicBoxShape.stadium(),
           ),
-          padding: EdgeInsets.symmetric(vertical: 14, horizontal: 18),
+          padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 18),
           child: TextField(
-            onChanged: this.widget.onChanged,
+            onChanged: widget.onChanged,
             controller: _controller,
-            decoration: InputDecoration.collapsed(hintText: this.widget.hint),
+            decoration: InputDecoration.collapsed(hintText: widget.hint),
+            style: TextStyle(fontSize: 20),
           ),
         )
       ],

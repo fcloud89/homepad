@@ -1,4 +1,7 @@
 import 'package:flutter/widgets.dart';
+import 'package:homepad/pages/device_screen.dart';
+import 'package:homepad/pages/floor_screen.dart';
+import 'package:homepad/pages/room_screen.dart';
 
 class HomeList {
   HomeList({
@@ -14,23 +17,23 @@ class HomeList {
   static List<HomeList> homeList = [
     HomeList(
       imagePath: 'assets/ic_room.svg',
-      name: '房间管理',
-      navigateScreen: Container(),
+      name: 'Device',
+      navigateScreen: MyDevicePage(),
     ),
     HomeList(
       imagePath: 'assets/ic_room.svg',
-      name: '设备管理',
-      navigateScreen: Container(),
+      name: 'Sence ',
+      navigateScreen: SizedBox(),
+    ),
+    HomeList(
+      imagePath: 'assets/ic_floor.svg',
+      name: 'Floor ',
+      navigateScreen: MyFloorPage(),
     ),
     HomeList(
       imagePath: 'assets/ic_room.svg',
-      name: '...',
-      navigateScreen: Container(),
-    ),
-    HomeList(
-      imagePath: 'assets/ic_room.svg',
-      name: '...',
-      navigateScreen: Container(),
+      name: 'Room  ',
+      navigateScreen: MyRoomPage(),
     ),
   ];
 }

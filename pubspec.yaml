@@ -1,5 +1,6 @@
 name: homepad
 description: "A new Flutter project."
+publish_to: none
 version: 1.0.0+1
 
 environment:
@@ -15,12 +16,17 @@ dependencies:
   font_awesome_flutter: ^10.1.0
   flutter_svg: ^2.0.9
   bot_toast: ^4.1.3
+  virtual_keyboard_multi_language: ^1.0.3
+  sqlite3: ^2.3.0
+  flutter_slidable: ^3.0.1
+  flutter_nbware:
+    path: ../flutter_nbware
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
 
-  flutter_lints: ^2.0.0
+  flutter_lints: ^3.0.1
 
 flutter:
   uses-material-design: true

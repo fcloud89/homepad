@@ -8,7 +8,9 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:homepad/model/homelist.dart';
 import 'package:homepad/model/msg_list_data.dart';
 import 'package:homepad/pages/hotel_list_view.dart';
-import 'package:homepad/widgets/TextField.dart';
+import 'package:homepad/pages/room_screen.dart';
+import 'package:homepad/utils/RouteHelper.dart';
+import 'package:homepad/widgets/MTextField.dart';
 import 'package:homepad/widgets/WCustomDialog.dart';
 import 'package:homepad/widgets/fwidget/stateful.dart';
 
@@ -123,13 +125,8 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                           animationController: animationController,
                           listData: homeList[index],
                           callBack: () {
-                            // Navigator.push<dynamic>(
-                            //   context,
-                            //   MaterialPageRoute<dynamic>(
-                            //     builder: (BuildContext context) =>
-                            //         homeList[index].navigateScreen!,
-                            //   ),
-                            // );
+                            RouteHelper.pushWidget(
+                                context, homeList[index].navigateScreen!);
                           },
                         );
                       },
@@ -243,228 +240,63 @@ class HomeListView extends StatelessWidget {
   Widget build(BuildContext context) {
     return AnimatedBuilder(
       animation: animationController!,
-      builder: (BuildContext context, Widget? child) {
+      builder: (BuildContext bct, Widget? child) {
         return FadeTransition(
           opacity: animation!,
           child: Transform(
             transform: Matrix4.translationValues(
                 0.0, 50 * (1.0 - animation!.value), 0.0),
-            child: btns(listData),
+            child: btns(bct, listData),
           ),
         );
       },
     );
   }
-}
 
-Widget btns(HomeList? listData) {
-  return NeumorphicButton(
-    padding: EdgeInsets.zero,
-    style: NeumorphicStyle(
-      boxShape: NeumorphicBoxShape.roundRect(
-        BorderRadius.circular(12),
-      ),
-      color: Colors.transparent,
-      shape: NeumorphicShape.flat,
-    ),
-    child: ClipRect(
-      child: BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: 10.0, sigmaY: 10.0),
-        child: Container(
-            padding: const EdgeInsets.only(left: 20, right: 20),
-            decoration:
-                BoxDecoration(color: Colors.grey.shade200.withOpacity(0.3)),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                SvgPicture.asset(
-                  listData!.imagePath,
-                  width: 80,
-                  height: 80,
-                  colorFilter: const ColorFilter.mode(
-                      Color.fromARGB(255, 202, 97, 4), BlendMode.srcIn),
-                ),
-                Container(
-                  margin: const EdgeInsets.only(left: 20, right: 20),
-                  child: Text(
-                    listData!.name,
-                    style: const TextStyle(
-                      fontWeight: FontWeight.w600,
-                      fontSize: 32,
-                    ),
-                  ),
-                )
-              ],
-            )),
-      ),
-    ),
-    onPressed: () {
-      WCustomDialog.show((cancelFunc) {
-        return roomsWDG(cancelFunc);
-      });
-    },
-  );
-}
-
-Widget roomsWDG(cancelFunc) {
-  return Stateful(builder: (BuildContext context, StateSetter state, Map data) {
-    double w = MediaQuery.of(context).size.width;
-    double h = MediaQuery.of(context).size.height;
-    return Material(
-      child: Container(
-        decoration: const BoxDecoration(
-          image: DecorationImage(
-              image: AssetImage('assets/bg_floor.jpg'), fit: BoxFit.fill),
+  Widget btns(BuildContext bct, HomeList? listData) {
+    return NeumorphicButton(
+      padding: EdgeInsets.zero,
+      style: NeumorphicStyle(
+        boxShape: NeumorphicBoxShape.roundRect(
+          BorderRadius.circular(12),
         ),
-        child: ClipRect(
-          child: BackdropFilter(
-            filter: ImageFilter.blur(sigmaX: 5.0, sigmaY: 5.0),
-            child: Container(
-              alignment: Alignment.topLeft,
-              padding: const EdgeInsets.all(50),
+        color: Colors.transparent,
+        shape: NeumorphicShape.flat,
+      ),
+      child: ClipRect(
+        child: BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 10.0, sigmaY: 10.0),
+          child: Container(
+              padding: const EdgeInsets.only(left: 20, right: 20),
+              decoration:
+                  BoxDecoration(color: Colors.grey.shade200.withOpacity(0.3)),
               child: Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  NeumorphicButton(
-                    padding: const EdgeInsets.all(4),
-                    style: const NeumorphicStyle(
-                      shadowLightColor: Color(0x8A000000),
-                      shadowDarkColor: Color(0x8A000000),
-                      boxShape: NeumorphicBoxShape.circle(),
-                      shape: NeumorphicShape.flat,
-                      depth: 10,
-                      // intensity: 5,
-                    ),
-                    child: Container(
-                      height: 70,
-                      width: 70,
-                      padding: EdgeInsets.all(10),
-                      child: GestureDetector(
-                        onTap: () {
-                          cancelFunc();
-                        },
-                        child: SvgPicture.asset(
-                          "assets/ic_return.svg",
-                          colorFilter:
-                              ColorFilter.mode(Colors.black, BlendMode.srcIn),
-                        ),
-                      ),
-                    ),
-                    onPressed: () {},
+                  SvgPicture.asset(
+                    listData!.imagePath,
+                    width: 80,
+                    height: 80,
+                    colorFilter: const ColorFilter.mode(
+                        Color.fromARGB(255, 202, 97, 4), BlendMode.srcIn),
                   ),
                   Container(
-                    width: w * 0.4,
-                    height: h - 100,
-                    margin: EdgeInsets.only(left: 70),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: const BorderRadius.only(
-                          topLeft: Radius.circular(8.0),
-                          bottomLeft: Radius.circular(8.0),
-                          bottomRight: Radius.circular(8.0),
-                          topRight: Radius.circular(8.0)),
-                      boxShadow: <BoxShadow>[
-                        BoxShadow(
-                            color: Color(0xFF3A5160).withOpacity(0.5),
-                            offset: Offset(1.1, 1.1),
-                            blurRadius: 20.0),
-                      ],
-                    ),
-                    child: Neumorphic(
-                      margin:
-                          EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                      padding:
-                          EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                      style: NeumorphicStyle(
-                        color: Colors.white,
-                        boxShape: NeumorphicBoxShape.roundRect(
-                            BorderRadius.circular(12)),
-                      ),
-                      child: Column(
-                        children: <Widget>[
-                          SizedBox(height: 8),
-                          Align(
-                            alignment: Alignment.centerRight,
-                            child: NeumorphicButton(
-                              // onPressed: _isButtonEnabled() ? () {} : null,
-                              padding: EdgeInsets.symmetric(
-                                  horizontal: 20, vertical: 20),
-                              child: Text(
-                                "Sign Up",
-                                style: TextStyle(fontWeight: FontWeight.w800),
-                              ),
-                            ),
-                          ),
-                          // _AvatarField(),
-                          SizedBox(height: 8),
-                          WTextField(
-                            label: "First name",
-                            hint: "",
-                            onChanged: (firstName) {
-                              state(() {
-                                // this.firstName = firstName;
-                              });
-                            },
-                          ),
-                          SizedBox(height: 8),
-                          WTextField(
-                            label: "Last name",
-                            hint: "",
-                            onChanged: (lastName) {
-                              state(() {
-                                // this.lastName = lastName;
-                              });
-                            },
-                          ),
-                          SizedBox(height: 8),
-                          // _AgeField(
-                          //   age: this.age,
-                          //   onChanged: (age) {
-                          //     setState(() {
-                          //       this.age = age;
-                          //     });
-                          //   },
-                          // ),
-                          SizedBox(height: 8),
-                          // _GenderField(
-                          //   gender: gender ?? Gender.NON_BINARY,
-                          //   onChanged: (gender) {
-                          //     setState(() {
-                          //       this.gender = gender;
-                          //     });
-                          //   },
-                          // ),
-                          SizedBox(height: 8),
-                          SizedBox(height: 20),
-                        ],
+                    margin: const EdgeInsets.only(left: 20, right: 20),
+                    child: Text(
+                      listData!.name,
+                      style: const TextStyle(
+                        fontWeight: FontWeight.w600,
+                        fontSize: 32,
                       ),
                     ),
-                  ),
-                  Container(
-                    width: w * 0.4,
-                    height: h - 100,
-                    margin: EdgeInsets.only(left: 70),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: const BorderRadius.only(
-                          topLeft: Radius.circular(8.0),
-                          bottomLeft: Radius.circular(8.0),
-                          bottomRight: Radius.circular(8.0),
-                          topRight: Radius.circular(8.0)),
-                      boxShadow: <BoxShadow>[
-                        BoxShadow(
-                            color: Color(0xFF3A5160).withOpacity(0.5),
-                            offset: Offset(1.1, 1.1),
-                            blurRadius: 20.0),
-                      ],
-                    ),
-                  ),
+                  )
                 ],
-              ),
-            ),
-          ),
+              )),
         ),
       ),
+      onPressed: () {
+        callBack?.call();
+      },
     );
-  });
+  }
 }

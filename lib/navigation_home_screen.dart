@@ -56,12 +56,12 @@ class _NavigationHomeScreenState extends State<NavigationHomeScreen> {
           break;
         case DrawerIndex.Floor:
           setState(() {
-            screenView = const MyFloorPage();
+            screenView = MyFloorPage();
           });
           break;
         case DrawerIndex.Room:
           setState(() {
-            screenView = const MyRoomPage();
+            screenView = MyRoomPage();
           });
           break;
         case DrawerIndex.About:
