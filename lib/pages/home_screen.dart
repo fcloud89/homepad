@@ -8,11 +8,12 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:homepad/model/homelist.dart';
 import 'package:homepad/model/msg_list_data.dart';
 import 'package:homepad/pages/hotel_list_view.dart';
-import 'package:homepad/pages/room_screen.dart';
+import 'package:homepad/pages/camera_screen.dart';
 import 'package:homepad/utils/RouteHelper.dart';
 import 'package:homepad/widgets/MTextField.dart';
 import 'package:homepad/widgets/WCustomDialog.dart';
 import 'package:homepad/widgets/fwidget/stateful.dart';
+import 'package:wakelock_plus/wakelock_plus.dart';
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key});

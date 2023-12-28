@@ -2,6 +2,7 @@ import 'dart:developer';
 import 'dart:ui';
 
 import 'package:bot_toast/bot_toast.dart';
+import 'package:dbus/dbus.dart';
 import 'package:flutter_neumorphic_plus/flutter_neumorphic.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:homepad/utils/SizeUtils.dart';
@@ -10,7 +11,7 @@ import 'package:homepad/widgets/WLine.dart';
 import 'package:homepad/widgets/WPopupWindow.dart';
 import 'package:homepad/widgets/back_button.dart';
 
-class MyDevicePage extends StatelessWidget {
+class MyCameraPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return NeumorphicTheme(
@@ -32,25 +33,31 @@ class MyDevicePage extends StatelessWidget {
               fit: BoxFit.fill,
             ),
           ),
-          child: const _MyDevicePage(),
+          child: _MyCameraPage(),
         )),
       ),
     );
   }
 }
 
-class _MyDevicePage extends StatefulWidget {
-  const _MyDevicePage();
-
+class _MyCameraPage extends StatefulWidget {
   @override
-  State<_MyDevicePage> createState() => _MyDevicePageState();
+  State<_MyCameraPage> createState() => _MyCameraPageState();
 }
 
-class _MyDevicePageState extends State<_MyDevicePage>
+class _MyCameraPageState extends State<_MyCameraPage>
     with TickerProviderStateMixin {
   final items = List<String>.generate(20, (i) => 'camera ${i + 1}');
-  List testList = ["room 1", "room 2", "room 3", "room 4", "room 5"];
+  List testList = ["area 1", "area 2", "area 3", "area 4", "area 5"];
+  List cameraList = [
+    "camera 1",
+    "camera 2",
+    "camera 3",
+    "camera 4",
+    "camera 5"
+  ];
   AnimationController? animationController;
+  DBusClient dbClient = DBusClient.system();
 
   @override
   void initState() {
@@ -70,15 +77,224 @@ class _MyDevicePageState extends State<_MyDevicePage>
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const SizedBox(
+          Container(
             width: 70,
             height: 70,
+            margin: EdgeInsets.only(right: 50),
             child: NeumorphicBack(),
           ),
+          Expanded(
+            child: ClipRect(
+              child: BackdropFilter(
+                filter: ImageFilter.blur(sigmaX: 5.0, sigmaY: 5.0),
+                child: Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+                  decoration: BoxDecoration(
+                      color: Colors.black.withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(16)),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Stack(
+                        alignment: Alignment.center,
+                        children: [
+                          const Align(
+                            alignment: Alignment.center,
+                            child: Text(
+                              "camera #2345",
+                              style: TextStyle(
+                                  color: Colors.black87, fontSize: 24),
+                            ),
+                          ),
+                          Align(
+                            alignment: Alignment.centerLeft,
+                            child: NeumorphicButton(
+                              padding: EdgeInsets.zero,
+                              style: NeumorphicStyle(
+                                color: Color.fromARGB(255, 202, 97, 4),
+                                shape: NeumorphicShape.flat,
+                                boxShape: NeumorphicBoxShape.roundRect(
+                                    const BorderRadius.all(
+                                        Radius.circular(12))),
+                              ),
+                              child: Container(
+                                width: 48,
+                                height: 48,
+                                alignment: Alignment.center,
+                                child: SvgPicture.asset(
+                                  "assets/ic_del.svg",
+                                  width: 32,
+                                  height: 32,
+                                  colorFilter: const ColorFilter.mode(
+                                      Colors.white, BlendMode.srcIn),
+                                ),
+                              ),
+                              onPressed: () async {
+                                DBusRemoteObject dBusRemoteObject =
+                                    DBusRemoteObject(dbClient,
+                                        name: 'org.freedesktop.NetworkManager',
+                                        path: DBusObjectPath(
+                                            '/org/freedesktop/NetworkManager'));
+
+                                await dBusRemoteObject.setProperty(
+                                    'org.freedesktop.NetworkManager',
+                                    'WirelessEnabled',
+                                    const DBusBoolean(true));
+
+                                // DBusValue devices =
+                                //     await dBusRemoteObject.getProperty(
+                                //         'org.freedesktop.NetworkManager',
+                                //         'Devices');
+                                // Iterator<String> it =
+                                //     devices.asStringArray().iterator;
+                                // while (it.moveNext()) {
+                                //   print("${it.current}");
+                                // }
+                              },
+                            ),
+                          ),
+                          Align(
+                            alignment: Alignment.centerRight,
+                            child: NeumorphicButton(
+                              padding: EdgeInsets.zero,
+                              style: NeumorphicStyle(
+                                shape: NeumorphicShape.flat,
+                                boxShape: NeumorphicBoxShape.roundRect(
+                                    const BorderRadius.all(
+                                        Radius.circular(12))),
+                              ),
+                              child: Container(
+                                width: 100,
+                                height: 48,
+                                alignment: Alignment.center,
+                                child: const Text(
+                                  "save",
+                                  style: TextStyle(
+                                      color: Colors.black, fontSize: 20),
+                                ),
+                              ),
+                              onPressed: () {},
+                            ),
+                          ),
+                        ],
+                      ),
+                      SizedBox(height: 20),
+                      Row(
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 20.0, vertical: 12),
+                            child: Text(
+                              "choose area",
+                              style: TextStyle(
+                                fontWeight: FontWeight.w700,
+                                color:
+                                    NeumorphicTheme.defaultTextColor(context),
+                                fontSize: 20,
+                              ),
+                            ),
+                          ),
+                          Container(
+                            width: w * 0.22,
+                            child: Builder(builder: (BuildContext popCT) {
+                              return NeumorphicButton(
+                                padding: EdgeInsets.zero,
+                                margin: EdgeInsets.only(right: 10),
+                                style: NeumorphicStyle(
+                                  shape: NeumorphicShape.flat,
+                                  boxShape: NeumorphicBoxShape.roundRect(
+                                      const BorderRadius.all(
+                                          Radius.circular(12))),
+                                ),
+                                child: Stack(
+                                  alignment: Alignment.centerRight,
+                                  children: [
+                                    Container(
+                                      height: 48,
+                                      padding:
+                                          EdgeInsets.symmetric(horizontal: 20),
+                                      alignment: Alignment.centerLeft,
+                                      child: const Text(
+                                        "Area #1",
+                                        style: TextStyle(
+                                            color: Colors.grey, fontSize: 20),
+                                      ),
+                                    ),
+                                    SvgPicture.asset(
+                                      "assets/ic_arrow_down.svg",
+                                      width: 40,
+                                      height: 40,
+                                      colorFilter: const ColorFilter.mode(
+                                          Color.fromARGB(255, 202, 97, 4),
+                                          BlendMode.srcIn),
+                                    ),
+                                  ],
+                                ),
+                                onPressed: () {
+                                  WPopupWindow.show(
+                                    getListWidget(testList),
+                                    radius: 12,
+                                    targetContext: popCT,
+                                    width: w * 0.215,
+                                    height: 200.px,
+                                    preferDirection: PreferDirection.bottomLeft,
+                                    verticalOffset: 1.px,
+                                  );
+                                },
+                              );
+                            }),
+                          ),
+                          Expanded(
+                            child: MTextField(
+                              label: "camera name",
+                              directionCol: false,
+                              onChanged: (firstName) {
+                                log(firstName);
+                                // setState(() {});
+                              },
+                            ),
+                          ),
+                        ],
+                      ),
+                      SizedBox(height: 10),
+                      MTextField(
+                        label: "camera description",
+                        directionCol: false,
+                        onChanged: (lastName) {
+                          // setState(() {});
+                        },
+                      ),
+                      Container(
+                        margin:
+                            EdgeInsets.symmetric(horizontal: 10, vertical: 30),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(12),
+                          color: Colors.black,
+                        ),
+                        child: AspectRatio(
+                            aspectRatio: 16 / 9,
+                            child: Align(
+                              alignment: Alignment.center,
+                              child: Text(
+                                "TV",
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                    fontSize: 60,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.white),
+                              ),
+                            )),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ),
           Container(
-            width: w * 0.5,
-            height: h,
-            margin: const EdgeInsets.symmetric(horizontal: 50),
+            width: w * 0.2,
+            margin: const EdgeInsets.only(left: 50),
             child: ClipRect(
               child: BackdropFilter(
                   filter: ImageFilter.blur(sigmaX: 5.0, sigmaY: 5.0),
@@ -91,19 +307,19 @@ class _MyDevicePageState extends State<_MyDevicePage>
                     child: Column(
                       children: [
                         const Text(
-                          "Device list",
+                          "camera list",
                           style: TextStyle(color: Colors.black87, fontSize: 24),
                         ),
                         Expanded(
                           child: Container(
                             padding: const EdgeInsets.symmetric(
-                                vertical: 20, horizontal: 10),
+                                vertical: 10, horizontal: 0),
                             child: GridView(
                               physics: const BouncingScrollPhysics(),
                               scrollDirection: Axis.vertical,
                               gridDelegate:
                                   const SliverGridDelegateWithFixedCrossAxisCount(
-                                crossAxisCount: 2,
+                                crossAxisCount: 1,
                                 mainAxisSpacing: 0.0,
                                 crossAxisSpacing: 0.0,
                                 childAspectRatio: 16 / 9,
@@ -138,209 +354,89 @@ class _MyDevicePageState extends State<_MyDevicePage>
                   )),
             ),
           ),
-          Expanded(
-            child: ClipRect(
-              child: BackdropFilter(
-                filter: ImageFilter.blur(sigmaX: 5.0, sigmaY: 5.0),
-                child: Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
-                  decoration: BoxDecoration(
-                      color: Colors.black.withOpacity(0.1),
-                      borderRadius: BorderRadius.circular(16)),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Stack(
-                        alignment: Alignment.center,
-                        children: [
-                          const Align(
-                            alignment: Alignment.center,
-                            child: Text(
-                              "Device info",
-                              style: TextStyle(
-                                  color: Colors.black87, fontSize: 24),
-                            ),
-                          ),
-                          Align(
-                            alignment: Alignment.centerLeft,
-                            child: NeumorphicButton(
-                              padding: EdgeInsets.zero,
-                              style: NeumorphicStyle(
-                                color: Color.fromARGB(255, 202, 97, 4),
-                                shape: NeumorphicShape.flat,
-                                boxShape: NeumorphicBoxShape.roundRect(
-                                    const BorderRadius.all(
-                                        Radius.circular(12))),
-                              ),
-                              child: Container(
-                                width: 48,
-                                height: 48,
-                                alignment: Alignment.center,
-                                child: SvgPicture.asset(
-                                  "assets/ic_del.svg",
-                                  width: 32,
-                                  height: 32,
-                                  colorFilter: const ColorFilter.mode(
-                                      Colors.white, BlendMode.srcIn),
-                                ),
-                              ),
-                              onPressed: () {},
-                            ),
-                          ),
-                          Align(
-                            alignment: Alignment.centerRight,
-                            child: NeumorphicButton(
-                              padding: EdgeInsets.zero,
-                              style: NeumorphicStyle(
-                                shape: NeumorphicShape.flat,
-                                boxShape: NeumorphicBoxShape.roundRect(
-                                    const BorderRadius.all(
-                                        Radius.circular(12))),
-                              ),
-                              child: Container(
-                                width: 100,
-                                height: 48,
-                                alignment: Alignment.center,
-                                child: const Text(
-                                  "save",
-                                  style: TextStyle(
-                                      color: Colors.black, fontSize: 20),
-                                ),
-                              ),
-                              onPressed: () {},
-                            ),
-                          ),
-                        ],
-                      ),
-                      SizedBox(height: 40),
-                      Row(
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 20.0, vertical: 12),
-                            child: Text(
-                              "choose room",
-                              style: TextStyle(
-                                fontWeight: FontWeight.w700,
-                                color:
-                                    NeumorphicTheme.defaultTextColor(context),
-                                fontSize: 20,
-                              ),
-                            ),
-                          ),
-                          Expanded(
-                            child: Builder(builder: (BuildContext popCT) {
-                              return NeumorphicButton(
-                                padding: EdgeInsets.zero,
-                                margin: EdgeInsets.only(right: 10),
-                                style: NeumorphicStyle(
-                                  shape: NeumorphicShape.flat,
-                                  boxShape: NeumorphicBoxShape.roundRect(
-                                      const BorderRadius.all(
-                                          Radius.circular(12))),
-                                ),
-                                child: Stack(
-                                  alignment: Alignment.centerRight,
-                                  children: [
-                                    Container(
-                                      height: 48,
-                                      padding:
-                                          EdgeInsets.symmetric(horizontal: 20),
-                                      alignment: Alignment.centerLeft,
-                                      child: const Text(
-                                        "Build No.1 Floor #1 Room #34",
-                                        style: TextStyle(
-                                            color: Colors.grey, fontSize: 20),
-                                      ),
-                                    ),
-                                    SvgPicture.asset(
-                                      "assets/ic_arrow_down.svg",
-                                      width: 40,
-                                      height: 40,
-                                      colorFilter: const ColorFilter.mode(
-                                          Color.fromARGB(255, 202, 97, 4),
-                                          BlendMode.srcIn),
-                                    ),
-                                  ],
-                                ),
-                                onPressed: () {
-                                  WPopupWindow.show(
-                                    getListWidget(testList),
-                                    targetContext: popCT,
-                                    width: w * 0.245,
-                                    height: 200.px,
-                                    preferDirection: PreferDirection.bottomLeft,
-                                    verticalOffset: 1.px,
-                                  );
-                                },
-                              );
-                            }),
-                          ),
-                        ],
-                      ),
-                      SizedBox(height: 10),
-                      MTextField(
-                        label: "Device name",
-                        hint: "",
-                        onChanged: (firstName) {
-                          log(firstName);
-                          // setState(() {});
-                        },
-                      ),
-                      MTextField(
-                        label: "Device description",
-                        hint: "",
-                        onChanged: (lastName) {
-                          // setState(() {});
-                        },
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-          ),
         ],
       ),
     );
   }
 
   Widget getListWidget(list) {
-    return Scrollbar(
-      child: ListView.builder(
-        padding: EdgeInsets.zero,
-        itemBuilder: (BuildContext context, int index) {
-          return Stack(
-            children: [
-              Material(
-                color: Colors.white,
-                child: Ink(
-                  child: InkWell(
-                    onTap: () async {
-                      BotToast.removeAll(BotToast.attachedKey);
-                      setState(() {});
-                    },
-                    child: Container(
-                      alignment: Alignment.center,
-                      height: 60.px,
-                      child: Text(
-                        list[index],
-                        style: TextStyle(
-                            fontSize: 20.px, color: Color(0xff333333)),
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(12),
+      child: Scrollbar(
+        child: ListView.builder(
+          padding: EdgeInsets.zero,
+          itemBuilder: (BuildContext context, int index) {
+            return Stack(
+              children: [
+                Material(
+                  child: Ink(
+                    child: InkWell(
+                      onTap: () async {
+                        BotToast.removeAll(BotToast.attachedKey);
+                        setState(() {});
+                      },
+                      child: Container(
+                        alignment: Alignment.center,
+                        height: 60.px,
+                        child: Text(
+                          list[index],
+                          style: TextStyle(
+                              fontSize: 20.px, color: Color(0xff333333)),
+                        ),
                       ),
                     ),
                   ),
                 ),
-              ),
-              WLine(
-                marginLeft: 20.px,
-                marginRight: 20.px,
-              ),
-            ],
-          );
-        },
-        itemCount: list.length,
+                WLine(
+                  marginLeft: 20.px,
+                  marginRight: 20.px,
+                ),
+              ],
+            );
+          },
+          itemCount: list.length,
+        ),
+      ),
+    );
+  }
+
+  Widget getCameraListWidget(list) {
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(12),
+      child: Scrollbar(
+        child: ListView.builder(
+          padding: EdgeInsets.zero,
+          itemBuilder: (BuildContext context, int index) {
+            return Stack(
+              children: [
+                Material(
+                  child: Ink(
+                    child: InkWell(
+                      onTap: () async {
+                        BotToast.removeAll(BotToast.attachedKey);
+                        setState(() {});
+                      },
+                      child: Container(
+                        alignment: Alignment.center,
+                        height: 60.px,
+                        child: Text(
+                          list[index],
+                          style: TextStyle(
+                              fontSize: 20.px, color: Color(0xff333333)),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+                WLine(
+                  marginLeft: 20.px,
+                  marginRight: 20.px,
+                ),
+              ],
+            );
+          },
+          itemCount: list.length,
+        ),
       ),
     );
   }

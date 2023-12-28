@@ -6,9 +6,9 @@
 
 #include "generated_plugin_registrant.h"
 
-#include <flutter_nbware/flutter_nbware_plugin.h>
+#include <video_player_elinux/video_player_elinux_plugin.h>
 
 void RegisterPlugins(flutter::PluginRegistry* registry) {
-  FlutterNbwarePluginRegisterWithRegistrar(
-      registry->GetRegistrarForPlugin("FlutterNbwarePlugin"));
+  VideoPlayerElinuxPluginRegisterWithRegistrar(
+      registry->GetRegistrarForPlugin("VideoPlayerElinuxPlugin"));
 }

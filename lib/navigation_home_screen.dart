@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:homepad/pages/floor_screen.dart';
-import 'package:homepad/pages/room_screen.dart';
+import 'package:homepad/pages/area_screen.dart';
+import 'package:homepad/pages/camera_screen.dart';
+import 'package:homepad/pages/home_screen.dart';
 import 'package:homepad/theme/app_theme.dart';
 
 import 'custom_drawer/drawer_user_controller.dart';
 import 'custom_drawer/home_drawer.dart';
-import 'pages/home_screen.dart';
+import 'pages/camera_screen.dart';
 
 class NavigationHomeScreen extends StatefulWidget {
   @override
@@ -54,14 +55,14 @@ class _NavigationHomeScreenState extends State<NavigationHomeScreen> {
             screenView = const MyHomePage();
           });
           break;
-        case DrawerIndex.Floor:
+        case DrawerIndex.Area:
           setState(() {
-            screenView = MyFloorPage();
+            screenView = MyAreaPage();
           });
           break;
-        case DrawerIndex.Room:
+        case DrawerIndex.Camera:
           setState(() {
-            screenView = MyRoomPage();
+            screenView = MyCameraPage();
           });
           break;
         case DrawerIndex.About:

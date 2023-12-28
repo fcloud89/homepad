@@ -2,9 +2,12 @@ import 'package:bot_toast/bot_toast.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_neumorphic_plus/flutter_neumorphic.dart';
 import 'package:responsive_builder/responsive_builder.dart';
+import 'package:wakelock_plus/wakelock_plus.dart';
 import 'navigation_home_screen.dart';
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
+  WakelockPlus.enable();
   runApp(const MyApp());
 }
 

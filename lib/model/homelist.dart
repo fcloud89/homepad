@@ -1,7 +1,8 @@
 import 'package:flutter/widgets.dart';
-import 'package:homepad/pages/device_screen.dart';
-import 'package:homepad/pages/floor_screen.dart';
-import 'package:homepad/pages/room_screen.dart';
+import 'package:homepad/pages/scene_screen.dart';
+import 'package:homepad/pages/vcr_screen.dart';
+import 'package:homepad/pages/area_screen.dart';
+import 'package:homepad/pages/camera_screen.dart';
 
 class HomeList {
   HomeList({
@@ -17,23 +18,23 @@ class HomeList {
   static List<HomeList> homeList = [
     HomeList(
       imagePath: 'assets/ic_room.svg',
-      name: 'Device',
-      navigateScreen: MyDevicePage(),
+      name: 'Vcr   ',
+      navigateScreen: MyVcrPage(),
     ),
     HomeList(
       imagePath: 'assets/ic_room.svg',
       name: 'Sence ',
-      navigateScreen: SizedBox(),
+      navigateScreen: MyScenePage(),
     ),
     HomeList(
       imagePath: 'assets/ic_floor.svg',
-      name: 'Floor ',
-      navigateScreen: MyFloorPage(),
+      name: 'Area  ',
+      navigateScreen: MyAreaPage(),
     ),
     HomeList(
       imagePath: 'assets/ic_room.svg',
-      name: 'Room  ',
-      navigateScreen: MyRoomPage(),
+      name: 'Camera',
+      navigateScreen: MyCameraPage(),
     ),
   ];
 }

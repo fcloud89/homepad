@@ -9,7 +9,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:homepad/widgets/MTextField.dart';
 import 'package:homepad/widgets/back_button.dart';
 
-class MyFloorPage extends StatelessWidget {
+class MyAreaPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return NeumorphicTheme(
@@ -31,21 +31,19 @@ class MyFloorPage extends StatelessWidget {
               fit: BoxFit.fill,
             ),
           ),
-          child: const _MyFloorPage(),
+          child: _MyAreaPage(),
         )),
       ),
     );
   }
 }
 
-class _MyFloorPage extends StatefulWidget {
-  const _MyFloorPage();
-
+class _MyAreaPage extends StatefulWidget {
   @override
-  State<_MyFloorPage> createState() => _MyFloorPageState();
+  State<_MyAreaPage> createState() => _MyAreaPageState();
 }
 
-class _MyFloorPageState extends State<_MyFloorPage>
+class _MyAreaPageState extends State<_MyAreaPage>
     with TickerProviderStateMixin {
   AnimationController? animationController;
   final items = List<String>.generate(20, (i) => 'Item ${i + 1}');
@@ -89,7 +87,7 @@ class _MyFloorPageState extends State<_MyFloorPage>
                     child: Column(
                       children: [
                         const Text(
-                          "Floor list",
+                          "area list",
                           style: TextStyle(color: Colors.black87, fontSize: 24),
                         ),
                         Expanded(
@@ -109,7 +107,7 @@ class _MyFloorPageState extends State<_MyFloorPage>
                                                 (1 / count) * index, 1.0,
                                                 curve: Curves.fastOutSlowIn)));
                                 animationController?.forward();
-                                return FloorListView(
+                                return AreaListView(
                                   animation: animation,
                                   animationController: animationController!,
                                   callBack: () {},
@@ -143,7 +141,7 @@ class _MyFloorPageState extends State<_MyFloorPage>
                           const Align(
                             alignment: Alignment.center,
                             child: Text(
-                              "Floor info",
+                              "Area info",
                               style: TextStyle(
                                   color: Colors.black87, fontSize: 24),
                             ),
@@ -201,7 +199,7 @@ class _MyFloorPageState extends State<_MyFloorPage>
                       ),
                       SizedBox(height: 40),
                       MTextField(
-                        label: "Floor name",
+                        label: "Area name",
                         hint: "",
                         onChanged: (firstName) {
                           log(firstName);
@@ -209,7 +207,7 @@ class _MyFloorPageState extends State<_MyFloorPage>
                         },
                       ),
                       MTextField(
-                        label: "Floor description",
+                        label: "Area description",
                         hint: "",
                         onChanged: (lastName) {
                           // setState(() {});
@@ -227,8 +225,8 @@ class _MyFloorPageState extends State<_MyFloorPage>
   }
 }
 
-class FloorListView extends StatelessWidget {
-  const FloorListView(
+class AreaListView extends StatelessWidget {
+  const AreaListView(
       {Key? key,
       this.listData,
       this.callBack,
