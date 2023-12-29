@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:homepad/theme/hotel_app_theme.dart';
 import 'package:video_player/video_player.dart';
 
@@ -60,34 +61,26 @@ class _VideoPopupViewState extends State<VideoPopupView>
                 onTap: () {
                   Navigator.pop(context);
                 },
-                child: Center(
-                  child: Padding(
-                    padding: const EdgeInsets.all(24.0),
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: HotelAppTheme.buildLightTheme().backgroundColor,
-                        borderRadius:
-                            const BorderRadius.all(Radius.circular(24.0)),
-                        boxShadow: <BoxShadow>[
-                          BoxShadow(
-                              color: Colors.grey.withOpacity(0.2),
-                              offset: const Offset(4, 4),
-                              blurRadius: 8.0),
-                        ],
-                      ),
-                      child: InkWell(
-                        borderRadius:
-                            const BorderRadius.all(Radius.circular(24.0)),
-                        onTap: () {},
-                        child: Container(
-                          // width: 480,
-                          // height: 360,
-                          color: Colors.black,
-                          alignment: Alignment.center,
+                child: Padding(
+                  padding: const EdgeInsets.all(10.0),
+                  child: Stack(
+                    children: [
+                      Container(
+                        margin: const EdgeInsets.all(40.0),
+                        child: ClipRRect(
+                          borderRadius:
+                              const BorderRadius.all(Radius.circular(18.0)),
                           child: VideoPlayer(controller),
                         ),
                       ),
-                    ),
+                      SvgPicture.asset(
+                        "assets/ic_close.svg",
+                        width: 50,
+                        height: 50,
+                        colorFilter: const ColorFilter.mode(
+                            Colors.white, BlendMode.srcIn),
+                      ),
+                    ],
                   ),
                 ),
               ),

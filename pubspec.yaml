@@ -24,7 +24,12 @@ dependencies:
   intl: ^0.19.0
   video_player: ^2.8.1
   video_player_elinux:
-    path: ../video-player
+    git:
+      url: https://github.com/sony/flutter-elinux-plugins.git
+      path: packages/video_player
+      ref: main
+  # video_player_elinux:
+  #   path: ../video-player
 
 dev_dependencies:
   flutter_test:
@@ -37,3 +42,4 @@ flutter:
 
   assets:
     - assets/
+    - assets/video/
