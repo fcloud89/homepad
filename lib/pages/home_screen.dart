@@ -46,6 +46,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
           image: AssetImage('assets/bg.jpg'),
           fit: BoxFit.fill,
         ),
+        // color: Color(0xFF1C2B3C),
       ),
       child: Row(
         children: [
@@ -95,7 +96,30 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                     )
                   ],
                 ),
-                // const Expanded(child: SizedBox()),
+                // Container(
+                //   height: h / 3,
+                //   child: ListView.builder(
+                //     itemCount: hotelList.length,
+                //     scrollDirection: Axis.vertical,
+                //     itemBuilder: (BuildContext context, int index) {
+                //       final int count =
+                //           hotelList.length > 10 ? 10 : hotelList.length;
+                //       final Animation<double> animation =
+                //           Tween<double>(begin: 0.0, end: 1.0).animate(
+                //               CurvedAnimation(
+                //                   parent: animationController!,
+                //                   curve: Interval((1 / count) * index, 1.0,
+                //                       curve: Curves.fastOutSlowIn)));
+                //       animationController?.forward();
+                //       return HotelListView(
+                //         callback: () {},
+                //         hotelData: hotelList[index],
+                //         animation: animation,
+                //         animationController: animationController!,
+                //       );
+                //     },
+                //   ),
+                // ),
                 Expanded(
                   child: GridView(
                     reverse: true,
@@ -269,8 +293,7 @@ class HomeListView extends StatelessWidget {
           filter: ImageFilter.blur(sigmaX: 10.0, sigmaY: 10.0),
           child: Container(
               padding: const EdgeInsets.only(left: 20, right: 20),
-              decoration:
-                  BoxDecoration(color: Colors.grey.shade200.withOpacity(0.3)),
+              decoration: BoxDecoration(color: Colors.white.withOpacity(1)),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -279,7 +302,7 @@ class HomeListView extends StatelessWidget {
                     width: 80,
                     height: 80,
                     colorFilter: const ColorFilter.mode(
-                        Color.fromARGB(255, 202, 97, 4), BlendMode.srcIn),
+                        Color(0xFFCD703F), BlendMode.srcIn),
                   ),
                   Container(
                     margin: const EdgeInsets.only(left: 20, right: 20),

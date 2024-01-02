@@ -17,7 +17,7 @@ class HomeList {
 
   static List<HomeList> homeList = [
     HomeList(
-      imagePath: 'assets/ic_room.svg',
+      imagePath: 'assets/ic_record.svg',
       name: 'Vcr   ',
       navigateScreen: MyVcrPage(),
     ),
@@ -32,7 +32,7 @@ class HomeList {
       navigateScreen: MyAreaPage(),
     ),
     HomeList(
-      imagePath: 'assets/ic_room.svg',
+      imagePath: 'assets/ic_camera.svg',
       name: 'Camera',
       navigateScreen: MyCameraPage(),
     ),

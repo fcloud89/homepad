@@ -20,8 +20,8 @@ class MyApp extends StatelessWidget {
       title: 'Flutter Demo',
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-        primaryColor: const Color(0xFF3a828b),
-        primaryColorDark: const Color(0xFF1f252c),
+        primaryColor: const Color(0xFF2E4861),
+        primaryColorDark: const Color(0xFF1C2B3C),
         scaffoldBackgroundColor: const Color(0xffffffff),
         platform: TargetPlatform.iOS,
         visualDensity: VisualDensity.adaptivePlatformDensity,

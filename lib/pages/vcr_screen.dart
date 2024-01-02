@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:developer';
 import 'dart:ui';
 
@@ -5,6 +6,7 @@ import 'package:bot_toast/bot_toast.dart';
 import 'package:dbus/dbus.dart';
 import 'package:flutter_neumorphic_plus/flutter_neumorphic.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:homepad/model/gdbus-nbware.dart';
 import 'package:homepad/utils/SizeUtils.dart';
 import 'package:homepad/widgets/MTextField.dart';
 import 'package:homepad/widgets/WLine.dart';
@@ -65,13 +67,32 @@ class _MyVcrPageState extends State<_MyVcrPage> with TickerProviderStateMixin {
   DateTime? startDate;
   DateTime? endDate;
   AnimationController? animationController;
-  DBusClient dbClient = DBusClient.system();
+  late DBusClient dbClient;
+  late ComSmarthomeNbwareGraph object;
+  late StreamSubscription connectSS;
+  late StreamSubscription recordSS;
+  late StreamSubscription aiSS;
 
   @override
   void initState() {
     super.initState();
     animationController = AnimationController(
         duration: const Duration(milliseconds: 1000), vsync: this);
+    dbClient = DBusClient.session();
+    object = ComSmarthomeNbwareGraph(
+        dbClient, 'com.smarthome.nbware', DBusObjectPath('/nbware/graph'));
+    connectSS = object.onConnectionNotify.asBroadcastStream().listen((event) {
+      print(
+          "onConnectionNotify  uid:${event.uid}  connection:${event.connection}");
+    });
+    recordSS = object.onRecordingNotify.asBroadcastStream().listen((event) {
+      print(
+          "onRecordingNotify  uid:${event.uid}  recording:${event.recording}");
+    });
+    aiSS = object.onAIDetectionNotify.asBroadcastStream().listen((event) {
+      print(
+          "onAIDetectionNotify  uid:${event.uid}  detection:${event.detection}");
+    });
   }
 
   @override
@@ -283,7 +304,12 @@ class _MyVcrPageState extends State<_MyVcrPage> with TickerProviderStateMixin {
                                       color: Colors.black, fontSize: 20),
                                 ),
                               ),
-                              onPressed: () {},
+                              onPressed: () {
+                                object.callGetAllStates().then((value) {
+                                  print("${value.length}");
+                                  print("${value[0][0]}");
+                                });
+                              },
                             ),
                           ),
                         ],
@@ -376,6 +402,14 @@ class _MyVcrPageState extends State<_MyVcrPage> with TickerProviderStateMixin {
         ),
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    connectSS.cancel();
+    recordSS.cancel();
+    aiSS.cancel();
   }
 }
 
