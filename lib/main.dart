@@ -1,6 +1,7 @@
 import 'package:bot_toast/bot_toast.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_neumorphic_plus/flutter_neumorphic.dart';
+import 'package:homepad/pages/home_screen.dart';
 import 'package:responsive_builder/responsive_builder.dart';
 import 'package:wakelock_plus/wakelock_plus.dart';
 import 'navigation_home_screen.dart';
@@ -39,7 +40,7 @@ class MyApp extends StatelessWidget {
         ),
         desktop: OrientationLayoutBuilder(
           portrait: (context) => Container(color: Colors.deepPurpleAccent),
-          landscape: (context) => NavigationHomeScreen(),
+          landscape: (context) => const MyHomePage(),
         ),
       ),
     );

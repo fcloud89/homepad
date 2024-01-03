@@ -4,8 +4,8 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:homepad/model/msg_list_data.dart';
 import 'package:homepad/theme/hotel_app_theme.dart';
 
-class HotelListView extends StatelessWidget {
-  const HotelListView(
+class NoticeListView extends StatelessWidget {
+  const NoticeListView(
       {Key? key,
       this.hotelData,
       this.animationController,
