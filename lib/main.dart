@@ -4,7 +4,6 @@ import 'package:flutter_neumorphic_plus/flutter_neumorphic.dart';
 import 'package:homepad/pages/home_screen.dart';
 import 'package:responsive_builder/responsive_builder.dart';
 import 'package:wakelock_plus/wakelock_plus.dart';
-import 'navigation_home_screen.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();

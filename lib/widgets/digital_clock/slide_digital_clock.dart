@@ -48,8 +48,6 @@ class _DigitalClockState extends State<DigitalClock> {
     _dateTime = DateTime.now();
     _clockModel = ClockModel();
     _clockModel.is24HourFormat = widget.is24HourTimeFormat;
-
-    _dateTime = DateTime.now();
     _clockModel.hour = _dateTime.hour;
     _clockModel.minute = _dateTime.minute;
     _clockModel.second = _dateTime.second;

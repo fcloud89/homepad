@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-
 import 'package:homepad/model/msg_list_data.dart';
 import 'package:homepad/theme/hotel_app_theme.dart';
 
@@ -91,13 +89,6 @@ class NoticeListView extends StatelessWidget {
                                                 ),
                                                 const SizedBox(
                                                   width: 4,
-                                                ),
-                                                Icon(
-                                                  FontAwesomeIcons.locationDot,
-                                                  size: 12,
-                                                  color: HotelAppTheme
-                                                          .buildLightTheme()
-                                                      .primaryColor,
                                                 ),
                                                 Expanded(
                                                   child: Text(
