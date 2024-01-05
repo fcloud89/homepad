@@ -129,27 +129,36 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                           child: weather == null
                               ? const SizedBox()
                               : Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text(
-                                      "${weather?.temperature?.fahrenheit?.round()}F",
+                                      "${weather?.areaName}",
+                                      textScaler: TextScaler.linear(1),
                                       style: const TextStyle(
-                                          fontSize: 160, color: Colors.white),
+                                          fontSize: 60, color: Colors.white),
                                     ),
-                                    // Text(
-                                    //   "${weather?.tempMin?.celsius?.round()}℃ ~ ${weather?.tempMax?.celsius?.round()}℃",
-                                    //   style: const TextStyle(
-                                    //       fontSize: 60, color: Colors.white),
-                                    // ),
+                                    Text(
+                                      "${weather?.temperature?.fahrenheit?.round()}°F",
+                                      textScaler: TextScaler.linear(1),
+                                      style: const TextStyle(
+                                          fontSize: 140, color: Colors.white),
+                                    ),
+                                    Text(
+                                      "${weathers[0].tempMin?.fahrenheit?.round()}°F ~ ${weathers[0].tempMax?.fahrenheit?.round()}°F",
+                                      style: const TextStyle(
+                                          fontSize: 60, color: Colors.white),
+                                    ),
                                     Row(
                                       children: [
-                                        Image.network(
-                                            "https://openweathermap.org/themes/openweathermap/assets/vendor/owm/img/widgets/${weather?.weatherIcon}.png"),
                                         Text(
                                           "${weather?.weatherMain}",
+                                          textScaler: TextScaler.linear(1),
                                           style: const TextStyle(
                                               fontSize: 60,
                                               color: Colors.white),
                                         ),
+                                        Image.network(
+                                            "https://openweathermap.org/themes/openweathermap/assets/vendor/owm/img/widgets/${weather?.weatherIcon}.png"),
                                       ],
                                     ),
                                   ],
@@ -287,10 +296,10 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
         weather = w;
         setState(() {});
       });
-      // wf.fiveDayForecastByCityName(v).then((ws) {
-      //   weathers = ws;
-      //   setState(() {});
-      // });
+      wf.fiveDayForecastByCityName(v).then((ws) {
+        weathers = ws;
+        setState(() {});
+      });
     });
   }
 

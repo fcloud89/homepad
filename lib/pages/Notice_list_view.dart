@@ -36,7 +36,7 @@ class NoticeListView extends StatelessWidget {
                   child: Stack(
                     children: <Widget>[
                       Container(
-                        color: Colors.black.withOpacity(0.5),
+                        color: Colors.black.withOpacity(0.7),
                         padding: const EdgeInsets.only(
                             left: 16, top: 20, bottom: 20, right: 60),
                         child: Row(
