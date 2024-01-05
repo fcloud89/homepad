@@ -30,6 +30,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
   List<HomeList> homeList = HomeList.homeList;
   Weather? weather;
   List<Weather> weathers = [];
+  bool draggable = true;
   late WeatherFactory wf;
   late Timer weatherTimer;
   final PanelController _panelController = PanelController();
@@ -59,7 +60,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
         child: SlidingUpPanel(
           backdropEnabled: true,
           parallaxEnabled: true,
-          isDraggable: false,
+          isDraggable: draggable,
           controller: _panelController,
           slideDirection: SlideDirection.DOWN,
           color: Colors.transparent,
@@ -71,11 +72,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
             margin: const EdgeInsets.symmetric(horizontal: 300),
             child: GestureDetector(
               onTap: () {
-                if (_panelController.isPanelOpen) {
-                  _panelController.close();
-                } else if (_panelController.isPanelClosed) {
-                  _panelController.open();
-                }
+                _panelController.open();
               },
               child: Container(
                 decoration: BoxDecoration(
@@ -87,7 +84,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     const Text(
-                      "New!!!   ",
+                      "Alerts   ",
                       style: TextStyle(
                           color: Colors.white,
                           fontSize: 24,
@@ -104,46 +101,17 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
               ),
             ),
           ),
-          // panel: Container(
-          //   margin: const EdgeInsets.only(bottom: 50),
-          //   child: ClipRect(
-          //     child: BackdropFilter(
-          //       filter: ImageFilter.blur(sigmaX: 10.0, sigmaY: 10.0),
-          //       child: Container(
-          //         decoration: BoxDecoration(
-          //             color: Colors.white.withOpacity(0.3),
-          //             borderRadius: const BorderRadius.only(
-          //                 bottomLeft: Radius.circular(16),
-          //                 bottomRight: Radius.circular(16))),
-          //         child: Container(
-          //           height: 650,
-          //           // child: ListView.builder(
-          //           //   itemCount: hotelList.length,
-          //           //   scrollDirection: Axis.vertical,
-          //           //   itemBuilder: (BuildContext context, int index) {
-          //           //     final int count =
-          //           //         hotelList.length > 10 ? 10 : hotelList.length;
-          //           //     final Animation<double> animation =
-          //           //         Tween<double>(begin: 0.0, end: 1.0).animate(
-          //           //             CurvedAnimation(
-          //           //                 parent: animationController!,
-          //           //                 curve: Interval((1 / count) * index, 1.0,
-          //           //                     curve: Curves.fastOutSlowIn)));
-          //           //     animationController?.forward();
-          //           //     return NoticeListView(
-          //           //       callback: () {},
-          //           //       hotelData: hotelList[index],
-          //           //       animation: animation,
-          //           //       animationController: animationController!,
-          //           //     );
-          //           //   },
-          //           // ),
-          //         ),
-          //       ),
-          //     ),
-          //   ),
-          // ),
           panelBuilder: (ScrollController sc) => _scrollingList(sc),
+          onPanelClosed: () {
+            setState(() {
+              draggable = true;
+            });
+          },
+          onPanelOpened: () {
+            setState(() {
+              draggable = false;
+            });
+          },
           body: Column(
             children: [
               const Expanded(child: SizedBox()),

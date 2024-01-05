@@ -18,28 +18,9 @@ import 'package:homepad/widgets/video_popup_view.dart';
 class MyVcrPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return NeumorphicTheme(
-      theme: const NeumorphicThemeData(
-        baseColor: Color.fromARGB(255, 232, 232, 232),
-        defaultTextColor: Color(0xFF3E3E3E),
-        accentColor: Colors.grey,
-        variantColor: Colors.black38,
-        depth: 8,
-        intensity: 0.65,
-      ),
-      themeMode: ThemeMode.light,
-      child: Material(
-        child: NeumorphicBackground(
-            child: Container(
-          decoration: const BoxDecoration(
-            image: DecorationImage(
-              image: AssetImage('assets/bg_room.jpg'),
-              fit: BoxFit.fill,
-            ),
-          ),
-          child: _MyVcrPage(),
-        )),
-      ),
+    return Scaffold(
+      backgroundColor: Color.fromRGBO(39, 72, 98, 1),
+      body: _MyVcrPage(),
     );
   }
 }
@@ -99,268 +80,191 @@ class _MyVcrPageState extends State<_MyVcrPage> with TickerProviderStateMixin {
   Widget build(BuildContext context) {
     double w = MediaQuery.of(context).size.width;
     double h = MediaQuery.of(context).size.height;
-    return Container(
-      height: h,
-      width: w,
-      padding: const EdgeInsets.only(left: 50, right: 50, top: 50, bottom: 50),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const SizedBox(
-            width: 70,
-            height: 70,
-            child: NeumorphicBack(),
-          ),
-          Container(
-            width: w * 0.6,
-            height: h,
-            margin: const EdgeInsets.symmetric(horizontal: 50),
-            child: ClipRect(
-              child: BackdropFilter(
-                  filter: ImageFilter.blur(sigmaX: 5.0, sigmaY: 5.0),
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 10, vertical: 20),
-                    decoration: BoxDecoration(
-                        color: Colors.black87.withOpacity(0.1),
-                        borderRadius: BorderRadius.circular(16)),
-                    child: Column(
-                      children: [
-                        const Text(
-                          "vcr list",
-                          style: TextStyle(
-                              color: Colors.black87,
-                              fontSize: 32,
-                              fontWeight: FontWeight.bold),
-                        ),
-                        Container(
-                          margin: EdgeInsets.only(left: 25),
-                          alignment: Alignment.centerLeft,
-                          child: const Text(
-                            "areas",
-                            style: TextStyle(
-                                color: Colors.black87,
-                                fontSize: 24,
-                                fontWeight: FontWeight.bold),
-                          ),
-                        ),
-                        Container(
-                          height: 150,
-                          padding: EdgeInsets.symmetric(horizontal: 10),
-                          child: Row(
-                            children: [
-                              Expanded(
-                                child: GridView(
-                                  physics: const BouncingScrollPhysics(),
-                                  scrollDirection: Axis.horizontal,
-                                  gridDelegate:
-                                      const SliverGridDelegateWithFixedCrossAxisCount(
-                                    crossAxisCount: 1,
-                                    mainAxisSpacing: 0.0,
-                                    crossAxisSpacing: 0.0,
-                                    childAspectRatio: 9 / 16,
-                                  ),
-                                  children: List<Widget>.generate(
-                                    ritems.length,
-                                    (int index) {
-                                      final int count = ritems.length;
-                                      final Animation<double> animation =
-                                          Tween<double>(begin: 0.0, end: 1.0)
-                                              .animate(
-                                        CurvedAnimation(
-                                          parent: animationController!,
-                                          curve: Interval(
-                                              (1 / count) * index, 1.0,
-                                              curve: Curves.fastOutSlowIn),
-                                        ),
-                                      );
-                                      animationController?.forward();
-                                      return HomeListView(
-                                        animation: animation,
-                                        animationController:
-                                            animationController,
-                                        listData: ritems[index],
-                                        callBack: () {},
-                                      );
-                                    },
-                                  ),
-                                ),
-                              )
-                            ],
-                          ),
-                        ),
-                        Neumorphic(
-                          child: Container(
-                            height: 5,
-                            color: Colors.white,
-                          ),
-                        ),
-                        Container(
-                          margin: EdgeInsets.only(left: 25),
-                          alignment: Alignment.centerLeft,
-                          child: const Text(
-                            "vcrs",
-                            style: TextStyle(
-                                color: Colors.black87,
-                                fontSize: 24,
-                                fontWeight: FontWeight.bold),
-                          ),
-                        ),
-                        Expanded(
-                          child: Container(
-                            padding: const EdgeInsets.symmetric(
-                                vertical: 10, horizontal: 10),
-                            child: GridView(
-                              physics: const BouncingScrollPhysics(),
-                              scrollDirection: Axis.vertical,
-                              gridDelegate:
-                                  const SliverGridDelegateWithMaxCrossAxisExtent(
-                                mainAxisSpacing: 0.0,
-                                crossAxisSpacing: 0.0,
-                                childAspectRatio: 16 / 9,
-                                maxCrossAxisExtent: 480,
-                              ),
-                              children: List<Widget>.generate(
-                                items.length,
-                                (int index) {
-                                  final int count = items.length;
-                                  final Animation<double> animation =
-                                      Tween<double>(begin: 0.0, end: 1.0)
-                                          .animate(
-                                    CurvedAnimation(
-                                      parent: animationController!,
-                                      curve: Interval((1 / count) * index, 1.0,
-                                          curve: Curves.fastOutSlowIn),
-                                    ),
-                                  );
-                                  animationController?.forward();
-                                  return VcrListView(
-                                    animation: animation,
-                                    animationController: animationController,
-                                    listData: items[index],
-                                    callBack: () {
-                                      showDialog<dynamic>(
-                                        context: context!,
-                                        builder: (BuildContext context) =>
-                                            VideoPopupView(
-                                          url:
-                                              // 'rtsp://admin:Admin123@172.17.33.24:80/ch0_0.264',
-                                              'assets/video/test.mp4',
-                                        ),
-                                      );
-                                    },
-                                  );
-                                },
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
+    return Row(children: [
+      Expanded(
+        child: Column(
+          children: [
+            Container(
+              height: 70,
+              color: const Color.fromRGBO(23, 44, 60, 1),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  GestureDetector(
+                    child: const Padding(
+                      padding:
+                          EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                      child: Icon(
+                        Icons.arrow_back,
+                        color: Colors.white70,
+                        size: 44,
+                      ),
                     ),
-                  )),
+                    onTap: () {
+                      Navigator.of(context).pop();
+                    },
+                  ),
+                  const Text(
+                    "vcr list",
+                    style: TextStyle(color: Colors.white70, fontSize: 30),
+                  ),
+                  GestureDetector(
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 20, vertical: 10),
+                    ),
+                  ),
+                ],
+              ),
             ),
-          ),
-          Expanded(
-            child: ClipRect(
-              child: BackdropFilter(
-                filter: ImageFilter.blur(sigmaX: 5.0, sigmaY: 5.0),
-                child: Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
-                  decoration: BoxDecoration(
-                      color: Colors.black.withOpacity(0.1),
-                      borderRadius: BorderRadius.circular(16)),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Stack(
-                        alignment: Alignment.center,
-                        children: [
-                          const Align(
-                            alignment: Alignment.center,
-                            child: Text(
-                              "vcr info",
-                              style: TextStyle(
-                                  color: Colors.black87, fontSize: 24),
-                            ),
-                          ),
-                          Align(
-                            alignment: Alignment.centerRight,
-                            child: NeumorphicButton(
-                              padding: EdgeInsets.zero,
-                              style: NeumorphicStyle(
-                                shape: NeumorphicShape.flat,
-                                boxShape: NeumorphicBoxShape.roundRect(
-                                    const BorderRadius.all(
-                                        Radius.circular(12))),
-                              ),
-                              child: Container(
-                                width: 100,
-                                height: 48,
-                                alignment: Alignment.center,
-                                child: const Text(
-                                  "refresh",
-                                  style: TextStyle(
-                                      color: Colors.black, fontSize: 20),
-                                ),
-                              ),
-                              onPressed: () {
-                                object.callGetAllStates().then((value) {
-                                  print("${value.length}");
-                                  print("${value[0][0]}");
-                                });
-                              },
-                            ),
-                          ),
-                        ],
+            Container(
+              height: 150,
+              padding: EdgeInsets.symmetric(horizontal: 10),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: GridView(
+                      physics: const BouncingScrollPhysics(),
+                      scrollDirection: Axis.horizontal,
+                      gridDelegate:
+                          const SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 1,
+                        mainAxisSpacing: 0.0,
+                        crossAxisSpacing: 0.0,
+                        childAspectRatio: 9 / 16,
                       ),
-                      SizedBox(height: 20),
-                      Neumorphic(
-                          child: Container(
-                        color: Colors.white,
-                        child: CustomCalendarView(
-                          minimumDate: minimumDate,
-                          maximumDate: maximumDate,
-                          initialEndDate: initialEndDate,
-                          initialStartDate: initialStartDate,
-                          startEndDateChange:
-                              (DateTime startDateData, DateTime endDateData) {
-                            setState(() {
-                              startDate = startDateData;
-                              endDate = endDateData;
-                            });
-                          },
-                        ),
-                      )),
-                      SizedBox(
-                        height: 20,
+                      children: List<Widget>.generate(
+                        ritems.length,
+                        (int index) {
+                          final int count = ritems.length;
+                          final Animation<double> animation =
+                              Tween<double>(begin: 0.0, end: 1.0).animate(
+                            CurvedAnimation(
+                              parent: animationController!,
+                              curve: Interval((1 / count) * index, 1.0,
+                                  curve: Curves.fastOutSlowIn),
+                            ),
+                          );
+                          animationController?.forward();
+                          return HomeListView(
+                            animation: animation,
+                            animationController: animationController,
+                            listData: ritems[index],
+                            callBack: () {},
+                          );
+                        },
                       ),
-                      Expanded(
-                        child: Neumorphic(
-                          child: Container(
-                            color: Colors.white,
-                            alignment: Alignment.center,
-                            child: Column(children: [
-                              const Text(
-                                "vcr info",
-                                style: TextStyle(
-                                    color: Colors.black87,
-                                    fontSize: 28,
-                                    fontWeight: FontWeight.bold),
-                              ),
-                            ]),
-                          ),
+                    ),
+                  )
+                ],
+              ),
+            ),
+            Container(
+              height: 5,
+              color: Colors.white,
+            ),
+            Expanded(
+              child: Container(
+                padding: const EdgeInsets.all(5),
+                child: GridView(
+                  physics: const BouncingScrollPhysics(),
+                  scrollDirection: Axis.vertical,
+                  gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
+                    mainAxisSpacing: 0.0,
+                    crossAxisSpacing: 0.0,
+                    childAspectRatio: 16 / 9,
+                    maxCrossAxisExtent: 360,
+                  ),
+                  children: List<Widget>.generate(
+                    items.length,
+                    (int index) {
+                      final int count = items.length;
+                      final Animation<double> animation =
+                          Tween<double>(begin: 0.0, end: 1.0).animate(
+                        CurvedAnimation(
+                          parent: animationController!,
+                          curve: Interval((1 / count) * index, 1.0,
+                              curve: Curves.fastOutSlowIn),
                         ),
-                      )
-                    ],
+                      );
+                      animationController?.forward();
+                      return VcrListView(
+                        animation: animation,
+                        animationController: animationController,
+                        listData: items[index],
+                        callBack: () {
+                          showDialog<dynamic>(
+                            context: context!,
+                            builder: (BuildContext context) => VideoPopupView(
+                              url:
+                                  // 'rtsp://admin:Admin123@172.17.33.24:80/ch0_0.264',
+                                  'assets/video/test.mp4',
+                            ),
+                          );
+                        },
+                      );
+                    },
                   ),
                 ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
-    );
+      // Container(
+      //   width: 1,
+      //   color: Colors.white70,
+      // ),
+      Container(
+        width: w * 0.25,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Container(
+              height: 70,
+              color: const Color.fromRGBO(23, 44, 60, 1),
+              alignment: Alignment.center,
+              child: const Text(
+                "camera list",
+                style: TextStyle(color: Colors.white70, fontSize: 24),
+              ),
+            ),
+            Container(
+              color: Colors.white70,
+              child: CustomCalendarView(
+                minimumDate: minimumDate,
+                maximumDate: maximumDate,
+                initialEndDate: initialEndDate,
+                initialStartDate: initialStartDate,
+                startEndDateChange:
+                    (DateTime startDateData, DateTime endDateData) {
+                  setState(() {
+                    startDate = startDateData;
+                    endDate = endDateData;
+                  });
+                },
+              ),
+            ),
+            Expanded(
+              child: Container(
+                color: Colors.white70,
+                alignment: Alignment.center,
+                padding: EdgeInsets.symmetric(vertical: 20),
+                child: Column(children: [
+                  const Text(
+                    "vcr info",
+                    style: TextStyle(
+                        color: Colors.black87,
+                        fontSize: 28,
+                        fontWeight: FontWeight.bold),
+                  ),
+                ]),
+              ),
+            )
+          ],
+        ),
+      ),
+    ]);
   }
 
   Widget getCameraListWidget(list) {
@@ -446,22 +350,22 @@ class HomeListView extends StatelessWidget {
 
   Widget btns(BuildContext bct, dynamic? listData) {
     return NeumorphicButton(
-      // padding: EdgeInsets.zero,
-      margin: EdgeInsets.all(20),
+      padding: EdgeInsets.zero,
+      margin: EdgeInsets.all(10),
       style: NeumorphicStyle(
-        boxShape: NeumorphicBoxShape.roundRect(
-          BorderRadius.circular(12),
-        ),
-        color: Colors.white,
-        shape: NeumorphicShape.flat,
-      ),
+          boxShape: NeumorphicBoxShape.roundRect(
+            BorderRadius.circular(12),
+          ),
+          color: Colors.white70,
+          shape: NeumorphicShape.flat,
+          shadowLightColor: Colors.transparent),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           SvgPicture.asset(
             "assets/ic_room.svg",
-            width: 40,
-            height: 40,
+            width: 60,
+            height: 60,
             colorFilter: const ColorFilter.mode(
                 Color.fromARGB(255, 202, 97, 4), BlendMode.srcIn),
           ),
@@ -517,22 +421,22 @@ class VcrListView extends StatelessWidget {
 
   Widget btns(BuildContext bct, dynamic? listData) {
     return NeumorphicButton(
-      // padding: EdgeInsets.zero,
-      margin: EdgeInsets.all(20),
+      padding: EdgeInsets.zero,
+      margin: EdgeInsets.all(10),
       style: NeumorphicStyle(
-        boxShape: NeumorphicBoxShape.roundRect(
-          BorderRadius.circular(12),
-        ),
-        color: Colors.white,
-        shape: NeumorphicShape.flat,
-      ),
+          boxShape: NeumorphicBoxShape.roundRect(
+            BorderRadius.circular(12),
+          ),
+          color: Colors.white70,
+          shape: NeumorphicShape.flat,
+          shadowLightColor: Colors.transparent),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           SvgPicture.asset(
             "assets/ic_camera.svg",
-            width: 40,
-            height: 40,
+            width: 60,
+            height: 60,
             colorFilter: const ColorFilter.mode(
                 Color.fromARGB(255, 202, 97, 4), BlendMode.srcIn),
           ),
