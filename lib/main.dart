@@ -30,7 +30,7 @@ class MyApp extends StatelessWidget {
       navigatorObservers: [BotToastNavigatorObserver()],
       home: ScreenTypeLayout(
         mobile: OrientationLayoutBuilder(
-          portrait: (context) => Container(color: Colors.amber),
+          portrait: (context) => const MyHomePage(),
           landscape: (context) => Container(color: Colors.blueAccent),
         ),
         tablet: OrientationLayoutBuilder(

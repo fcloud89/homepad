@@ -5,12 +5,14 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:homepad/http/HttpUtils.dart';
 import 'package:homepad/model/homelist.dart';
 import 'package:homepad/model/msg_list_data.dart';
+import 'package:homepad/pages/Notice_list_view.dart';
 import 'package:homepad/pages/area_screen.dart';
 import 'package:homepad/pages/camera_screen.dart';
 import 'package:homepad/pages/scene_screen.dart';
 import 'package:homepad/pages/vcr_screen.dart';
 import 'package:homepad/utils/Constant.dart';
 import 'package:homepad/utils/RouteHelper.dart';
+import 'package:homepad/widgets/WDot.dart';
 import 'package:homepad/widgets/digital_clock/slide_digital_clock.dart';
 import 'package:homepad/widgets/panel.dart';
 import 'package:weather/weather.dart';
@@ -55,72 +57,93 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
         decoration: const BoxDecoration(
             image: DecorationImage(image: AssetImage("assets/th.webp"))),
         child: SlidingUpPanel(
+          backdropEnabled: true,
+          parallaxEnabled: true,
+          isDraggable: false,
           controller: _panelController,
           slideDirection: SlideDirection.DOWN,
           color: Colors.transparent,
           boxShadow: [],
           minHeight: 50,
           maxHeight: 700,
-          header: Container(
-              height: 50,
-              width: w,
-              color: Colors.transparent,
-              alignment: Alignment.center,
-              child: GestureDetector(
-                onTap: () {
-                  if (_panelController.isPanelOpen) {
-                    _panelController.close();
-                  } else if (_panelController.isPanelClosed) {
-                    _panelController.open();
-                  }
-                },
-                child: Container(
-                  width: 150,
-                  height: 50,
-                  decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.only(
-                          bottomLeft: Radius.circular(12),
-                          bottomRight: Radius.circular(12))),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        "New!!!   ",
-                        style: TextStyle(
-                            fontSize: 20, fontWeight: FontWeight.bold),
-                      ),
-                      Container(
-                        width: 36,
-                        height: 36,
-                        alignment: Alignment.center,
-                        decoration: BoxDecoration(
-                            color: Colors.red,
-                            borderRadius:
-                                BorderRadius.all(Radius.circular(18))),
-                        child: Text(
-                          "3",
-                          style: TextStyle(fontSize: 24, color: Colors.white),
-                        ),
-                      )
-                    ],
-                  ),
+          margin: const EdgeInsets.symmetric(horizontal: 500),
+          collapsed: Container(
+            margin: const EdgeInsets.symmetric(horizontal: 300),
+            child: GestureDetector(
+              onTap: () {
+                if (_panelController.isPanelOpen) {
+                  _panelController.close();
+                } else if (_panelController.isPanelClosed) {
+                  _panelController.open();
+                }
+              },
+              child: Container(
+                decoration: BoxDecoration(
+                    color: Colors.white.withOpacity(0.3),
+                    borderRadius: const BorderRadius.only(
+                        bottomLeft: Radius.circular(12),
+                        bottomRight: Radius.circular(12))),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Text(
+                      "New!!!   ",
+                      style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold),
+                    ),
+                    WDot(
+                      showCount: true,
+                      count: 4,
+                      fontSize: 24,
+                      height: 36,
+                    ),
+                  ],
                 ),
-              )),
-          // footer: Container(
-          //   height: 50,
-          //   width: w,
-          //   color: Colors.amber,
-          // ),
-          panel: Container(
-            alignment: Alignment.topCenter,
-            child: Container(
-              width: 800,
-              height: 650,
-              color: Colors.white,
-              child: Text("This is the sliding Widget"),
+              ),
             ),
           ),
+          // panel: Container(
+          //   margin: const EdgeInsets.only(bottom: 50),
+          //   child: ClipRect(
+          //     child: BackdropFilter(
+          //       filter: ImageFilter.blur(sigmaX: 10.0, sigmaY: 10.0),
+          //       child: Container(
+          //         decoration: BoxDecoration(
+          //             color: Colors.white.withOpacity(0.3),
+          //             borderRadius: const BorderRadius.only(
+          //                 bottomLeft: Radius.circular(16),
+          //                 bottomRight: Radius.circular(16))),
+          //         child: Container(
+          //           height: 650,
+          //           // child: ListView.builder(
+          //           //   itemCount: hotelList.length,
+          //           //   scrollDirection: Axis.vertical,
+          //           //   itemBuilder: (BuildContext context, int index) {
+          //           //     final int count =
+          //           //         hotelList.length > 10 ? 10 : hotelList.length;
+          //           //     final Animation<double> animation =
+          //           //         Tween<double>(begin: 0.0, end: 1.0).animate(
+          //           //             CurvedAnimation(
+          //           //                 parent: animationController!,
+          //           //                 curve: Interval((1 / count) * index, 1.0,
+          //           //                     curve: Curves.fastOutSlowIn)));
+          //           //     animationController?.forward();
+          //           //     return NoticeListView(
+          //           //       callback: () {},
+          //           //       hotelData: hotelList[index],
+          //           //       animation: animation,
+          //           //       animationController: animationController!,
+          //           //     );
+          //           //   },
+          //           // ),
+          //         ),
+          //       ),
+          //     ),
+          //   ),
+          // ),
+          panelBuilder: (ScrollController sc) => _scrollingList(sc),
           body: Column(
             children: [
               const Expanded(child: SizedBox()),
@@ -140,7 +163,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                               : Column(
                                   children: [
                                     Text(
-                                      "${weather?.temperature?.celsius?.round()}℃",
+                                      "${weather?.temperature?.fahrenheit?.round()}F",
                                       style: const TextStyle(
                                           fontSize: 160, color: Colors.white),
                                     ),
@@ -208,41 +231,50 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                   }),
                 ],
               ),
-
-              // Expanded(
-              //   child: Column(
-              //     children: [
-              //       Expanded(
-              //         flex: 2,
-              //         child: Container(
-              //           height: h / 3,
-              //           child: ListView.builder(
-              //             itemCount: hotelList.length,
-              //             scrollDirection: Axis.vertical,
-              //             itemBuilder: (BuildContext context, int index) {
-              //               final int count =
-              //                   hotelList.length > 10 ? 10 : hotelList.length;
-              //               final Animation<double> animation =
-              //                   Tween<double>(begin: 0.0, end: 1.0).animate(
-              //                       CurvedAnimation(
-              //                           parent: animationController!,
-              //                           curve: Interval((1 / count) * index, 1.0,
-              //                               curve: Curves.fastOutSlowIn)));
-              //               animationController?.forward();
-              //               return NoticeListView(
-              //                 callback: () {},
-              //                 hotelData: hotelList[index],
-              //                 animation: animation,
-              //                 animationController: animationController!,
-              //               );
-              //             },
-              //           ),
-              //         ),
-              //       ),
-              //     ],
-              //   ),
-              // ),
             ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _scrollingList(ScrollController sc) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 50),
+      child: ClipRect(
+        child: BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 10.0, sigmaY: 10.0),
+          child: Container(
+            decoration: BoxDecoration(
+                color: Colors.white.withOpacity(0.3),
+                borderRadius: const BorderRadius.only(
+                    bottomLeft: Radius.circular(16),
+                    bottomRight: Radius.circular(16))),
+            child: Container(
+              height: 650,
+              padding: EdgeInsets.all(20),
+              child: ListView.builder(
+                itemCount: hotelList.length,
+                scrollDirection: Axis.vertical,
+                itemBuilder: (BuildContext context, int index) {
+                  final int count =
+                      hotelList.length > 10 ? 10 : hotelList.length;
+                  final Animation<double> animation =
+                      Tween<double>(begin: 0.0, end: 1.0).animate(
+                          CurvedAnimation(
+                              parent: animationController!,
+                              curve: Interval((1 / count) * index, 1.0,
+                                  curve: Curves.fastOutSlowIn)));
+                  animationController?.forward();
+                  return NoticeListView(
+                    callback: () {},
+                    hotelData: hotelList[index],
+                    animation: animation,
+                    animationController: animationController!,
+                  );
+                },
+              ),
+            ),
           ),
         ),
       ),
