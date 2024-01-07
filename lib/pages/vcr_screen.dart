@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
-import 'dart:js_interop';
 import 'dart:ui';
 
 import 'package:bot_toast/bot_toast.dart';
@@ -79,18 +78,26 @@ class _MyVcrPageState extends State<_MyVcrPage> with TickerProviderStateMixin {
         var dir = Directory('nb/vcr');
         fileList = dir.listSync();
         infos.clear();
+        String pathImg = "";
         for (FileSystemEntity fileSystemEntity in fileList) {
           String a = ritems[0]['uid'].toRadixString(16);
           String uid = a.padLeft(8, '0');
-          if (fileSystemEntity.path.endsWith("info") &&
-              fileSystemEntity.path.contains(uid)) {
-            File i = File(fileSystemEntity.path);
-            i.readAsString().then((String contents) {
-              Map info = json.decode(contents) ?? {};
-              setState(() {
-                infos.add(info);
+          if (fileSystemEntity.path.contains(uid)) {
+            if (fileSystemEntity.path.endsWith("jpg") ||
+                fileSystemEntity.path.endsWith("jpeg") ||
+                fileSystemEntity.path.endsWith("png")) {
+              pathImg = fileSystemEntity.path;
+            }
+            if (fileSystemEntity.path.endsWith("info")) {
+              File i = File(fileSystemEntity.path);
+              i.readAsString().then((String contents) {
+                Map info = json.decode(contents) ?? {};
+                info['img'] = pathImg;
+                setState(() {
+                  infos.add(info);
+                });
               });
-            });
+            }
           }
         }
         setState(() {});
@@ -492,10 +499,23 @@ class VcrListView extends StatelessWidget {
             children: [
               AspectRatio(
                 aspectRatio: 16 / 9,
-                child: Image.file(
-                  File(listData['img']),
-                  fit: BoxFit.cover,
-                ),
+                child: listData['img'] == null
+                    ? Container(
+                        alignment: Alignment.center,
+                        decoration: const BoxDecoration(
+                          image: DecorationImage(
+                              image: AssetImage('assets/bg_vcr.jpg'),
+                              fit: BoxFit.cover),
+                        ),
+                        child: const Text(
+                          "No Preview",
+                          style: TextStyle(color: Colors.white, fontSize: 32),
+                        ),
+                      )
+                    : Image.file(
+                        File(listData['img']),
+                        fit: BoxFit.cover,
+                      ),
               ),
               Expanded(
                 child: Container(

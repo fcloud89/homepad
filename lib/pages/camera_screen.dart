@@ -13,22 +13,12 @@ import 'package:homepad/widgets/WLine.dart';
 import 'package:homepad/widgets/WPopupWindow.dart';
 import 'package:homepad/widgets/back_button.dart';
 
-class MyCameraPage extends StatelessWidget {
+class MyCameraPage extends StatefulWidget {
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.black,
-      body: _MyCameraPage(),
-    );
-  }
+  State<MyCameraPage> createState() => _MyCameraPageState();
 }
 
-class _MyCameraPage extends StatefulWidget {
-  @override
-  State<_MyCameraPage> createState() => _MyCameraPageState();
-}
-
-class _MyCameraPageState extends State<_MyCameraPage>
+class _MyCameraPageState extends State<MyCameraPage>
     with TickerProviderStateMixin {
   List infos = [];
   Map currect = {};
@@ -55,135 +45,245 @@ class _MyCameraPageState extends State<_MyCameraPage>
   Widget build(BuildContext context) {
     double w = MediaQuery.of(context).size.width;
     double h = MediaQuery.of(context).size.height;
-    return Row(
-      children: [
-        Expanded(
-          child: Column(
-            children: [
-              Container(
-                height: 70,
-                color: const Color.fromRGBO(23, 44, 60, 1),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    GestureDetector(
-                      child: const Padding(
-                        padding:
-                            EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                        child: Icon(
-                          Icons.arrow_back,
-                          color: Colors.white70,
-                          size: 44,
-                        ),
-                      ),
-                      onTap: () {
-                        Navigator.of(context).pop();
-                      },
-                    ),
-                    Text(
-                      currect['loc'] ?? "",
-                      style: TextStyle(color: Colors.white70, fontSize: 30),
-                    ),
-                    GestureDetector(
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 20, vertical: 10),
-                        child: SvgPicture.asset(
-                          "assets/ic_info.svg",
-                          width: 40,
-                          height: 40,
-                          colorFilter: const ColorFilter.mode(
-                              Colors.white70, BlendMode.srcIn),
-                        ),
-                      ),
-                      onTap: () {},
-                    ),
-                  ],
-                ),
-              ),
-              Expanded(
-                child: Container(
-                  alignment: Alignment.center,
-                  child: AspectRatio(
-                    aspectRatio: 16 / 9,
-                    child: Container(
-                      color: Colors.black,
-                      alignment: Alignment.center,
-                      child: const Text(
-                        "Live Video",
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                            fontSize: 60,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white),
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-            ],
+    return Scaffold(
+      body: Container(
+        decoration: BoxDecoration(
+          color: Colors.black.withOpacity(0.7),
+          image: DecorationImage(
+            image: AssetImage('assets/bg_cover.jpg'),
+            fit: BoxFit.fill,
           ),
         ),
-        Container(
-          width: w * 0.15,
-          color: Color.fromRGBO(39, 72, 98, 1),
-          child: Column(
-            children: [
-              Container(
-                height: 70,
-                color: const Color.fromRGBO(23, 44, 60, 1),
-                alignment: Alignment.center,
-                child: const Text(
-                  "camera list",
-                  style: TextStyle(color: Colors.white70, fontSize: 24),
-                ),
-              ),
-              Expanded(
-                child: Container(
-                  padding:
-                      const EdgeInsets.symmetric(vertical: 10, horizontal: 0),
-                  child: GridView(
-                    physics: const BouncingScrollPhysics(),
-                    scrollDirection: Axis.vertical,
-                    gridDelegate:
-                        const SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 1,
-                      mainAxisSpacing: 0.0,
-                      crossAxisSpacing: 0.0,
-                      childAspectRatio: 16 / 9,
+        child: Column(
+          children: [
+            Container(
+              height: 70,
+              color: Colors.black,
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Text(
+                      "02:05  am",
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(color: Colors.white, fontSize: 20),
                     ),
-                    children: List<Widget>.generate(
-                      infos.length,
-                      (int index) {
-                        final int count = infos.length;
-                        final Animation<double> animation =
-                            Tween<double>(begin: 0.0, end: 1.0).animate(
-                          CurvedAnimation(
-                            parent: animationController!,
-                            curve: Interval((1 / count) * index, 1.0,
-                                curve: Curves.fastOutSlowIn),
+                  ),
+                  Container(
+                    width: w * 0.15,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        Container(
+                          width: 50,
+                          alignment: Alignment.center,
+                          child: SvgPicture.asset(
+                            "assets/ic_signal_f.svg",
+                            width: 30,
+                            height: 30,
+                            colorFilter: const ColorFilter.mode(
+                                Colors.white, BlendMode.srcIn),
                           ),
-                        );
-                        animationController?.forward();
-                        return HomeListView(
-                          animation: animation,
-                          animationController: animationController,
-                          listData: infos[index],
-                          callBack: () {
-                            setState(() {
-                              currect = infos[index];
-                            });
-                          },
-                        );
-                      },
+                        ),
+                        Container(
+                          width: 64,
+                          alignment: Alignment.center,
+                          child: SvgPicture.asset(
+                            "assets/ic_battery.svg",
+                            width: 40,
+                            height: 40,
+                            colorFilter: const ColorFilter.mode(
+                                Colors.white, BlendMode.srcIn),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
-                ),
+                ],
               ),
-            ],
-          ),
+            ),
+            Expanded(
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Column(
+                      children: [
+                        Row(
+                          children: [
+                            GestureDetector(
+                              onTap: () {
+                                Navigator.of(context).pop();
+                              },
+                              child: Container(
+                                width: 50,
+                                height: 50,
+                                alignment: Alignment.center,
+                                margin: const EdgeInsets.all(20),
+                                decoration: const BoxDecoration(
+                                  color: Color(0xff3f3f3f),
+                                  borderRadius:
+                                      BorderRadius.all(Radius.circular(10)),
+                                ),
+                                child: SvgPicture.asset(
+                                  "assets/ic_return.svg",
+                                  width: 30,
+                                  height: 30,
+                                  colorFilter: const ColorFilter.mode(
+                                      Colors.white, BlendMode.srcIn),
+                                ),
+                              ),
+                            ),
+                            Expanded(
+                              child: Container(
+                                height: 50,
+                                decoration: const BoxDecoration(
+                                  color: Colors.black,
+                                  borderRadius:
+                                      BorderRadius.all(Radius.circular(10)),
+                                ),
+                                child: Row(
+                                  children: [
+                                    Expanded(
+                                        child: Container(
+                                      padding:
+                                          EdgeInsets.symmetric(horizontal: 20),
+                                      child: Text(
+                                        'Position.Layer.Name',
+                                        style: TextStyle(
+                                            fontSize: 24, color: Colors.white),
+                                      ),
+                                    )),
+                                    GestureDetector(
+                                      child: Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 10, vertical: 10),
+                                        child: SvgPicture.asset(
+                                          "assets/ic_info.svg",
+                                          width: 40,
+                                          height: 40,
+                                          colorFilter: const ColorFilter.mode(
+                                              Colors.white, BlendMode.srcIn),
+                                        ),
+                                      ),
+                                      onTap: () {},
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            )
+                          ],
+                        ),
+                        Expanded(
+                          child: Container(
+                              alignment: Alignment.topCenter,
+                              padding: EdgeInsets.only(left: 20),
+                              child: ClipRRect(
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(10)),
+                                child: AspectRatio(
+                                  aspectRatio: 16 / 9,
+                                  child: Container(
+                                    color: Colors.black,
+                                    alignment: Alignment.center,
+                                    child: const Text(
+                                      "Live Video",
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(
+                                          fontSize: 60,
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.white),
+                                    ),
+                                  ),
+                                ),
+                              )),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Container(
+                    width: w * 0.15,
+                    color: Colors.black,
+                    margin: EdgeInsets.only(left: 20),
+                    child: Column(
+                      children: [
+                        NeumorphicButton(
+                          padding: EdgeInsets.zero,
+                          margin: const EdgeInsets.symmetric(
+                              horizontal: 16, vertical: 8),
+                          style: NeumorphicStyle(
+                            boxShape: NeumorphicBoxShape.roundRect(
+                              BorderRadius.circular(8),
+                            ),
+                            color: Color(0xff1c1c1e),
+                            shadowLightColor: Colors.transparent,
+                            shape: NeumorphicShape.flat,
+                          ),
+                          child: AspectRatio(
+                            aspectRatio: 16 / 9,
+                            child: Container(
+                              alignment: Alignment.center,
+                              child: Text(
+                                "Add new camera",
+                                style: const TextStyle(
+                                    fontWeight: FontWeight.w600,
+                                    fontSize: 20,
+                                    color: Colors.white),
+                              ),
+                            ),
+                          ),
+                          onPressed: () {},
+                        ),
+                        Expanded(
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                                vertical: 10, horizontal: 0),
+                            child: GridView(
+                              physics: const BouncingScrollPhysics(),
+                              scrollDirection: Axis.vertical,
+                              gridDelegate:
+                                  const SliverGridDelegateWithFixedCrossAxisCount(
+                                crossAxisCount: 1,
+                                mainAxisSpacing: 0.0,
+                                crossAxisSpacing: 0.0,
+                                childAspectRatio: 16 / 9,
+                              ),
+                              children: List<Widget>.generate(
+                                infos.length,
+                                (int index) {
+                                  final int count = infos.length;
+                                  final Animation<double> animation =
+                                      Tween<double>(begin: 0.0, end: 1.0)
+                                          .animate(
+                                    CurvedAnimation(
+                                      parent: animationController!,
+                                      curve: Interval((1 / count) * index, 1.0,
+                                          curve: Curves.fastOutSlowIn),
+                                    ),
+                                  );
+                                  animationController?.forward();
+                                  return HomeListView(
+                                    animation: animation,
+                                    animationController: animationController,
+                                    listData: infos[index],
+                                    callBack: () {
+                                      setState(() {
+                                        currect = infos[index];
+                                      });
+                                    },
+                                  );
+                                },
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            )
+          ],
         ),
-      ],
+      ),
     );
   }
 
