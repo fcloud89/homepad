@@ -263,7 +263,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
       margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 40),
       child: ClipRect(
         child: BackdropFilter(
-          filter: ImageFilter.blur(sigmaX: 10.0, sigmaY: 20.0),
+          filter: ImageFilter.blur(sigmaX: 10.0, sigmaY: 10.0),
           child: GestureDetector(
             child: Container(
               width: 120,

@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:homepad/theme/hotel_app_theme.dart';
@@ -25,7 +27,7 @@ class _VideoPopupViewState extends State<VideoPopupView>
     controller = widget.url!.startsWith('http') ||
             widget.url!.startsWith('rtsp')
         ? VideoPlayerController.networkUrl(Uri.parse(widget.url!))
-        : VideoPlayerController.asset(widget.url!)
+        : VideoPlayerController.file(File(widget.url!))
       ..initialize().then((value) {
         controller.play().then((value) {
           setState(() {});

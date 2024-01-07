@@ -1,4 +1,6 @@
+import 'dart:convert';
 import 'dart:developer';
+import 'dart:io';
 import 'dart:ui';
 
 import 'package:bot_toast/bot_toast.dart';
@@ -28,15 +30,8 @@ class _MyCameraPage extends StatefulWidget {
 
 class _MyCameraPageState extends State<_MyCameraPage>
     with TickerProviderStateMixin {
-  final items = List<String>.generate(20, (i) => 'camera ${i + 1}');
-  List testList = ["area 1", "area 2", "area 3", "area 4", "area 5"];
-  List cameraList = [
-    "camera 1",
-    "camera 2",
-    "camera 3",
-    "camera 4",
-    "camera 5"
-  ];
+  List infos = [];
+  Map currect = {};
   AnimationController? animationController;
   DBusClient dbClient = DBusClient.system();
 
@@ -45,6 +40,15 @@ class _MyCameraPageState extends State<_MyCameraPage>
     super.initState();
     animationController = AnimationController(
         duration: const Duration(milliseconds: 1000), vsync: this);
+    var file = File('nb/camlist.json');
+    file.readAsString().then((String contents) {
+      setState(() {
+        infos = json.decode(contents) ?? [];
+        if (infos.isNotEmpty) {
+          currect = infos[0];
+        }
+      });
+    });
   }
 
   @override
@@ -76,8 +80,8 @@ class _MyCameraPageState extends State<_MyCameraPage>
                         Navigator.of(context).pop();
                       },
                     ),
-                    const Text(
-                      "camera #2345",
+                    Text(
+                      currect['loc'] ?? "",
                       style: TextStyle(color: Colors.white70, fontSize: 30),
                     ),
                     GestureDetector(
@@ -106,7 +110,7 @@ class _MyCameraPageState extends State<_MyCameraPage>
                       color: Colors.black,
                       alignment: Alignment.center,
                       child: const Text(
-                        "TV",
+                        "Live Video",
                         textAlign: TextAlign.center,
                         style: TextStyle(
                             fontSize: 60,
@@ -115,149 +119,6 @@ class _MyCameraPageState extends State<_MyCameraPage>
                       ),
                     ),
                   ),
-
-                  // Column(
-                  //   crossAxisAlignment: CrossAxisAlignment.center,
-                  //   children: [
-                  //     // Stack(
-                  //     //   alignment: Alignment.center,
-                  //     //   children: [
-                  //     //     Align(
-                  //     //       alignment: Alignment.centerLeft,
-                  //     //       child: NeumorphicButton(
-                  //     //         padding: EdgeInsets.zero,
-                  //     //         style: NeumorphicStyle(
-                  //     //           color: const Color.fromARGB(255, 202, 97, 4),
-                  //     //           shape: NeumorphicShape.flat,
-                  //     //           boxShape: NeumorphicBoxShape.roundRect(
-                  //     //               const BorderRadius.all(
-                  //     //                   Radius.circular(12))),
-                  //     //         ),
-                  //     //         child: Container(
-                  //     //           width: 48,
-                  //     //           height: 48,
-                  //     //           alignment: Alignment.center,
-                  //     //           child: SvgPicture.asset(
-                  //     //             "assets/ic_del.svg",
-                  //     //             width: 32,
-                  //     //             height: 32,
-                  //     //             colorFilter: const ColorFilter.mode(
-                  //     //                 Colors.white, BlendMode.srcIn),
-                  //     //           ),
-                  //     //         ),
-                  //     //         onPressed: () async {
-                  //     //           // DBusRemoteObject dBusRemoteObject =
-                  //     //           //     DBusRemoteObject(dbClient,
-                  //     //           //         name: 'org.freedesktop.NetworkManager',
-                  //     //           //         path: DBusObjectPath(
-                  //     //           //             '/org/freedesktop/NetworkManager'));
-
-                  //     //           // await dBusRemoteObject.setProperty(
-                  //     //           //     'org.freedesktop.NetworkManager',
-                  //     //           //     'WirelessEnabled',
-                  //     //           //     const DBusBoolean(true));
-
-                  //     //           // DBusValue devices =
-                  //     //           //     await dBusRemoteObject.getProperty(
-                  //     //           //         'org.freedesktop.NetworkManager',
-                  //     //           //         'Devices');
-                  //     //           // Iterator<String> it =
-                  //     //           //     devices.asStringArray().iterator;
-                  //     //           // while (it.moveNext()) {
-                  //     //           //   print("${it.current}");
-                  //     //           // }
-                  //     //         },
-                  //     //       ),
-                  //     //     ),
-                  //     //   ],
-                  //     // ),
-                  //     // Row(
-                  //     //   children: [
-                  //     //     Padding(
-                  //     //       padding: const EdgeInsets.symmetric(
-                  //     //           horizontal: 20.0, vertical: 12),
-                  //     //       child: Text(
-                  //     //         "choose area",
-                  //     //         style: TextStyle(
-                  //     //           fontWeight: FontWeight.w700,
-                  //     //           color:
-                  //     //               NeumorphicTheme.defaultTextColor(context),
-                  //     //           fontSize: 20,
-                  //     //         ),
-                  //     //       ),
-                  //     //     ),
-                  //     //     Container(
-                  //     //       width: w * 0.22,
-                  //     //       child: Builder(builder: (BuildContext popCT) {
-                  //     //         return NeumorphicButton(
-                  //     //           padding: EdgeInsets.zero,
-                  //     //           margin: const EdgeInsets.only(right: 10),
-                  //     //           style: NeumorphicStyle(
-                  //     //             shape: NeumorphicShape.flat,
-                  //     //             boxShape: NeumorphicBoxShape.roundRect(
-                  //     //                 const BorderRadius.all(
-                  //     //                     Radius.circular(12))),
-                  //     //           ),
-                  //     //           child: Stack(
-                  //     //             alignment: Alignment.centerRight,
-                  //     //             children: [
-                  //     //               Container(
-                  //     //                 height: 48,
-                  //     //                 padding: const EdgeInsets.symmetric(
-                  //     //                     horizontal: 20),
-                  //     //                 alignment: Alignment.centerLeft,
-                  //     //                 child: const Text(
-                  //     //                   "Area #1",
-                  //     //                   style: TextStyle(
-                  //     //                       color: Colors.grey, fontSize: 20),
-                  //     //                 ),
-                  //     //               ),
-                  //     //               SvgPicture.asset(
-                  //     //                 "assets/ic_arrow_down.svg",
-                  //     //                 width: 40,
-                  //     //                 height: 40,
-                  //     //                 colorFilter: const ColorFilter.mode(
-                  //     //                     Color.fromARGB(255, 202, 97, 4),
-                  //     //                     BlendMode.srcIn),
-                  //     //               ),
-                  //     //             ],
-                  //     //           ),
-                  //     //           onPressed: () {
-                  //     //             WPopupWindow.show(
-                  //     //               getListWidget(testList),
-                  //     //               radius: 12,
-                  //     //               targetContext: popCT,
-                  //     //               width: w * 0.215,
-                  //     //               height: 200.px,
-                  //     //               preferDirection: PreferDirection.bottomLeft,
-                  //     //               verticalOffset: 1.px,
-                  //     //             );
-                  //     //           },
-                  //     //         );
-                  //     //       }),
-                  //     //     ),
-                  //     //     Expanded(
-                  //     //       child: MTextField(
-                  //     //         label: "camera name",
-                  //     //         directionCol: false,
-                  //     //         onChanged: (firstName) {
-                  //     //           log(firstName);
-                  //     //           // setState(() {});
-                  //     //         },
-                  //     //       ),
-                  //     //     ),
-                  //     //   ],
-                  //     // ),
-                  //     // const SizedBox(height: 10),
-                  //     // MTextField(
-                  //     //   label: "camera description",
-                  //     //   directionCol: false,
-                  //     //   onChanged: (lastName) {
-                  //     //     // setState(() {});
-                  //     //   },
-                  //     // ),
-                  //   ],
-                  // ),
                 ),
               ),
             ],
@@ -292,9 +153,9 @@ class _MyCameraPageState extends State<_MyCameraPage>
                       childAspectRatio: 16 / 9,
                     ),
                     children: List<Widget>.generate(
-                      items.length,
+                      infos.length,
                       (int index) {
-                        final int count = items.length;
+                        final int count = infos.length;
                         final Animation<double> animation =
                             Tween<double>(begin: 0.0, end: 1.0).animate(
                           CurvedAnimation(
@@ -307,8 +168,12 @@ class _MyCameraPageState extends State<_MyCameraPage>
                         return HomeListView(
                           animation: animation,
                           animationController: animationController,
-                          listData: items[index],
-                          callBack: () {},
+                          listData: infos[index],
+                          callBack: () {
+                            setState(() {
+                              currect = infos[index];
+                            });
+                          },
                         );
                       },
                     ),
@@ -461,7 +326,7 @@ class HomeListView extends StatelessWidget {
           Container(
             margin: const EdgeInsets.only(left: 12),
             child: Text(
-              listData,
+              listData['loc'],
               style: const TextStyle(
                 fontWeight: FontWeight.w600,
                 fontSize: 28,

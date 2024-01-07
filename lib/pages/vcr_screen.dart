@@ -1,5 +1,8 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:developer';
+import 'dart:io';
+import 'dart:js_interop';
 import 'dart:ui';
 
 import 'package:bot_toast/bot_toast.dart';
@@ -8,6 +11,7 @@ import 'package:flutter_neumorphic_plus/flutter_neumorphic.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:homepad/model/gdbus-nbware.dart';
 import 'package:homepad/utils/SizeUtils.dart';
+import 'package:homepad/utils/common_utils.dart';
 import 'package:homepad/widgets/MTextField.dart';
 import 'package:homepad/widgets/WLine.dart';
 import 'package:homepad/widgets/WPopupWindow.dart';
@@ -19,7 +23,7 @@ class MyVcrPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color.fromRGBO(39, 72, 98, 1),
+      backgroundColor: const Color.fromRGBO(39, 72, 98, 1),
       body: _MyVcrPage(),
     );
   }
@@ -31,16 +35,8 @@ class _MyVcrPage extends StatefulWidget {
 }
 
 class _MyVcrPageState extends State<_MyVcrPage> with TickerProviderStateMixin {
-  final ritems = List<String>.generate(4, (i) => 'area ${i + 1}');
-  final items = List<String>.generate(20, (i) => 'camera ${i + 1}');
-  List testList = ["Camera 1", "Camera 2", "Camera 3", "Camera 4", "Camera 5"];
-  List cameraList = [
-    "camera 1",
-    "camera 2",
-    "camera 3",
-    "camera 4",
-    "camera 5"
-  ];
+  List ritems = [];
+  List infos = [];
   DateTime? minimumDate;
   DateTime? maximumDate;
   DateTime? initialStartDate;
@@ -48,31 +44,57 @@ class _MyVcrPageState extends State<_MyVcrPage> with TickerProviderStateMixin {
   DateTime? startDate;
   DateTime? endDate;
   AnimationController? animationController;
-  late DBusClient dbClient;
+  // late DBusClient dbClient;
   late ComSmarthomeNbwareGraph object;
   late StreamSubscription connectSS;
   late StreamSubscription recordSS;
   late StreamSubscription aiSS;
+  List<FileSystemEntity> fileList = [];
 
   @override
   void initState() {
     super.initState();
     animationController = AnimationController(
         duration: const Duration(milliseconds: 1000), vsync: this);
-    dbClient = DBusClient.session();
-    object = ComSmarthomeNbwareGraph(
-        dbClient, 'com.smarthome.nbware', DBusObjectPath('/nbware/graph'));
-    connectSS = object.onConnectionNotify.asBroadcastStream().listen((event) {
-      print(
-          "onConnectionNotify  uid:${event.uid}  connection:${event.connection}");
-    });
-    recordSS = object.onRecordingNotify.asBroadcastStream().listen((event) {
-      print(
-          "onRecordingNotify  uid:${event.uid}  recording:${event.recording}");
-    });
-    aiSS = object.onAIDetectionNotify.asBroadcastStream().listen((event) {
-      print(
-          "onAIDetectionNotify  uid:${event.uid}  detection:${event.detection}");
+    // dbClient = DBusClient.session();
+    // object = ComSmarthomeNbwareGraph(
+    //     dbClient, 'com.smarthome.nbware', DBusObjectPath('/nbware/graph'));
+    // connectSS = object.onConnectionNotify.asBroadcastStream().listen((event) {
+    //   print(
+    //       "onConnectionNotify  uid:${event.uid}  connection:${event.connection}");
+    // });
+    // recordSS = object.onRecordingNotify.asBroadcastStream().listen((event) {
+    //   print(
+    //       "onRecordingNotify  uid:${event.uid}  recording:${event.recording}");
+    // });
+    // aiSS = object.onAIDetectionNotify.asBroadcastStream().listen((event) {
+    //   print(
+    //       "onAIDetectionNotify  uid:${event.uid}  detection:${event.detection}");
+    // });
+    ritems.clear();
+    var file = File('nb/camlist.json');
+    file.readAsString().then((String contents) {
+      ritems = json.decode(contents) ?? [];
+      if (ritems.isNotEmpty) {
+        var dir = Directory('nb/vcr');
+        fileList = dir.listSync();
+        infos.clear();
+        for (FileSystemEntity fileSystemEntity in fileList) {
+          String a = ritems[0]['uid'].toRadixString(16);
+          String uid = a.padLeft(8, '0');
+          if (fileSystemEntity.path.endsWith("info") &&
+              fileSystemEntity.path.contains(uid)) {
+            File i = File(fileSystemEntity.path);
+            i.readAsString().then((String contents) {
+              Map info = json.decode(contents) ?? {};
+              setState(() {
+                infos.add(info);
+              });
+            });
+          }
+        }
+        setState(() {});
+      }
     });
   }
 
@@ -119,7 +141,7 @@ class _MyVcrPageState extends State<_MyVcrPage> with TickerProviderStateMixin {
             ),
             Container(
               height: 150,
-              padding: EdgeInsets.symmetric(horizontal: 10),
+              padding: const EdgeInsets.symmetric(horizontal: 10),
               child: Row(
                 children: [
                   Expanded(
@@ -150,7 +172,35 @@ class _MyVcrPageState extends State<_MyVcrPage> with TickerProviderStateMixin {
                             animation: animation,
                             animationController: animationController,
                             listData: ritems[index],
-                            callBack: () {},
+                            callBack: () {
+                              infos.clear();
+                              String pathImg = "";
+                              for (FileSystemEntity fileSystemEntity
+                                  in fileList) {
+                                String a =
+                                    ritems[index]['uid'].toRadixString(16);
+                                String uid = a.padLeft(8, '0');
+                                if (fileSystemEntity.path.contains(uid)) {
+                                  if (fileSystemEntity.path.endsWith("jpg") ||
+                                      fileSystemEntity.path.endsWith("jpeg") ||
+                                      fileSystemEntity.path.endsWith("png")) {
+                                    pathImg = fileSystemEntity.path;
+                                  }
+                                  if (fileSystemEntity.path.endsWith("info")) {
+                                    File i = File(fileSystemEntity.path);
+                                    i.readAsString().then((String contents) {
+                                      Map info = json.decode(contents) ?? {};
+                                      info['img'] = pathImg;
+                                      print(info);
+                                      setState(() {
+                                        infos.add(info);
+                                      });
+                                    });
+                                  }
+                                }
+                              }
+                              setState(() {});
+                            },
                           );
                         },
                       ),
@@ -169,16 +219,16 @@ class _MyVcrPageState extends State<_MyVcrPage> with TickerProviderStateMixin {
                 child: GridView(
                   physics: const BouncingScrollPhysics(),
                   scrollDirection: Axis.vertical,
-                  gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                     mainAxisSpacing: 0.0,
                     crossAxisSpacing: 0.0,
-                    childAspectRatio: 16 / 9,
-                    maxCrossAxisExtent: 360,
+                    childAspectRatio: 21 / 9,
+                    crossAxisCount: 2,
                   ),
                   children: List<Widget>.generate(
-                    items.length,
+                    infos.length,
                     (int index) {
-                      final int count = items.length;
+                      final int count = infos.length;
                       final Animation<double> animation =
                           Tween<double>(begin: 0.0, end: 1.0).animate(
                         CurvedAnimation(
@@ -191,16 +241,23 @@ class _MyVcrPageState extends State<_MyVcrPage> with TickerProviderStateMixin {
                       return VcrListView(
                         animation: animation,
                         animationController: animationController,
-                        listData: items[index],
+                        listData: infos[index],
                         callBack: () {
-                          showDialog<dynamic>(
-                            context: context!,
-                            builder: (BuildContext context) => VideoPopupView(
-                              url:
-                                  // 'rtsp://admin:Admin123@172.17.33.24:80/ch0_0.264',
-                                  'assets/video/test.mp4',
-                            ),
-                          );
+                          for (FileSystemEntity fileSystemEntity in fileList) {
+                            String a = ritems[index]['uid'].toRadixString(16);
+                            String uid = a.padLeft(8, '0');
+                            if (fileSystemEntity.path.endsWith("mp4") &&
+                                fileSystemEntity.path.contains(uid)) {
+                              showDialog<dynamic>(
+                                context: context!,
+                                builder: (BuildContext context) => VideoPopupView(
+                                    url:
+                                        // 'rtsp://admin:Admin123@172.17.33.24:80/ch0_0.264',
+                                        // 'assets/video/test.mp4',
+                                        fileSystemEntity.path),
+                              );
+                            }
+                          }
                         },
                       );
                     },
@@ -249,9 +306,9 @@ class _MyVcrPageState extends State<_MyVcrPage> with TickerProviderStateMixin {
               child: Container(
                 color: Colors.white70,
                 alignment: Alignment.center,
-                padding: EdgeInsets.symmetric(vertical: 20),
-                child: Column(children: [
-                  const Text(
+                padding: const EdgeInsets.symmetric(vertical: 20),
+                child: const Column(children: [
+                  Text(
                     "vcr info",
                     style: TextStyle(
                         color: Colors.black87,
@@ -289,7 +346,7 @@ class _MyVcrPageState extends State<_MyVcrPage> with TickerProviderStateMixin {
                         child: Text(
                           list[index],
                           style: TextStyle(
-                              fontSize: 20.px, color: Color(0xff333333)),
+                              fontSize: 20.px, color: const Color(0xff333333)),
                         ),
                       ),
                     ),
@@ -351,7 +408,7 @@ class HomeListView extends StatelessWidget {
   Widget btns(BuildContext bct, dynamic? listData) {
     return NeumorphicButton(
       padding: EdgeInsets.zero,
-      margin: EdgeInsets.all(10),
+      margin: const EdgeInsets.all(10),
       style: NeumorphicStyle(
           boxShape: NeumorphicBoxShape.roundRect(
             BorderRadius.circular(12),
@@ -372,7 +429,7 @@ class HomeListView extends StatelessWidget {
           Container(
             margin: const EdgeInsets.only(left: 10, right: 10),
             child: Text(
-              listData,
+              listData['loc'] ?? "",
               style: const TextStyle(
                 fontWeight: FontWeight.w600,
                 fontSize: 28,
@@ -389,13 +446,13 @@ class HomeListView extends StatelessWidget {
 }
 
 class VcrListView extends StatelessWidget {
-  const VcrListView(
-      {Key? key,
-      this.listData,
-      this.callBack,
-      this.animationController,
-      this.animation})
-      : super(key: key);
+  const VcrListView({
+    Key? key,
+    this.listData,
+    this.callBack,
+    this.animationController,
+    this.animation,
+  }) : super(key: key);
 
   final dynamic? listData;
   final VoidCallback? callBack;
@@ -412,45 +469,54 @@ class VcrListView extends StatelessWidget {
           child: Transform(
             transform: Matrix4.translationValues(
                 0.0, 50 * (1.0 - animation!.value), 0.0),
-            child: btns(bct, listData),
+            child: btns(bct),
           ),
         );
       },
     );
   }
 
-  Widget btns(BuildContext bct, dynamic? listData) {
+  Widget btns(BuildContext bct) {
     return NeumorphicButton(
       padding: EdgeInsets.zero,
-      margin: EdgeInsets.all(10),
-      style: NeumorphicStyle(
-          boxShape: NeumorphicBoxShape.roundRect(
-            BorderRadius.circular(12),
-          ),
-          color: Colors.white70,
+      margin: const EdgeInsets.all(10),
+      style: const NeumorphicStyle(
+          color: Colors.transparent,
           shape: NeumorphicShape.flat,
           shadowLightColor: Colors.transparent),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          SvgPicture.asset(
-            "assets/ic_camera.svg",
-            width: 60,
-            height: 60,
-            colorFilter: const ColorFilter.mode(
-                Color.fromARGB(255, 202, 97, 4), BlendMode.srcIn),
-          ),
-          Container(
-            margin: const EdgeInsets.only(left: 10, right: 10),
-            child: Text(
-              listData,
-              style: const TextStyle(
-                fontWeight: FontWeight.w600,
-                fontSize: 28,
+      child: ClipRect(
+        child: BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 10.0, sigmaY: 10.0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              AspectRatio(
+                aspectRatio: 16 / 9,
+                child: Image.file(
+                  File(listData['img']),
+                  fit: BoxFit.cover,
+                ),
               ),
-            ),
-          )
-        ],
+              Expanded(
+                child: Container(
+                  alignment: Alignment.center,
+                  decoration: BoxDecoration(
+                    color: Colors.grey.shade200.withOpacity(0.3),
+                  ),
+                  padding: const EdgeInsets.only(left: 10, right: 10),
+                  child: Text(
+                    '${listData['uid']}',
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.w600,
+                      fontSize: 28,
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
       ),
       onPressed: () {
         callBack?.call();
