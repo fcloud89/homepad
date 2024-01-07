@@ -1,0 +1,6 @@
+[
+    {"uid":1111,"loc":"Backyard","url":"rtsp://172.17.22.50:8554/cam1/stream1"},
+    {"uid":1112,"loc":"Doorway","url":"rtsp://172.17.22.52:8554/cam1/stream1"},
+    {"uid":1113,"loc":"Gate","url":"rtsp://172.17.22.54:8554/cam1/stream1"},
+    {"uid":1114,"loc":"Garden","url":"rtsp://172.17.22.56:8554/cam1/stream1"}
+]
