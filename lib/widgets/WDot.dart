@@ -27,9 +27,9 @@ class WDot extends StatelessWidget {
         ? SizedBox()
         : (showCount
             ? Container(
-                padding: EdgeInsets.symmetric(horizontal: 11.px),
+                padding: EdgeInsets.symmetric(horizontal: 6.px),
                 alignment: Alignment.center,
-                constraints: BoxConstraints(minWidth: 14.px),
+                constraints: BoxConstraints(minWidth: fontSize * 1.6.px),
                 height: height.px,
                 decoration: BoxDecoration(
                   color: bg ?? WColor.CF36969,

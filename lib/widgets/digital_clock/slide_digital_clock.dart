@@ -86,7 +86,7 @@ class _DigitalClockState extends State<DigitalClock> {
             ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.end,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
             _hour(),
             Container(
@@ -97,8 +97,12 @@ class _DigitalClockState extends State<DigitalClock> {
               ),
             ),
             _minute,
-            _second,
-            _amPm,
+            Column(
+              children: [
+                _amPm,
+                _second,
+              ],
+            ),
           ],
         ),
       ),
@@ -133,7 +137,7 @@ class _DigitalClockState extends State<DigitalClock> {
 
   Widget get _second => widget.showSecondsDigit != false
       ? Container(
-          margin: EdgeInsets.only(bottom: 0, left: 4, right: 2),
+          margin: EdgeInsets.only(left: 20, top: 60),
           decoration: widget.secondDigitDecoration ??
               BoxDecoration(
                   border: Border.all(color: Colors.white),
@@ -158,8 +162,9 @@ class _DigitalClockState extends State<DigitalClock> {
       : Container(
           padding: EdgeInsets.symmetric(horizontal: 2),
           margin: EdgeInsets.only(
-              bottom: widget.hourMinuteDigitTextStyle != null
-                  ? widget.hourMinuteDigitTextStyle!.fontSize! / 2
+              left: 20,
+              top: widget.hourMinuteDigitTextStyle != null
+                  ? widget.hourMinuteDigitTextStyle!.fontSize! / 3
                   : 15),
           child: Text(
             " " + hTOhh_24hFalse(_clockModel.hour)[1],

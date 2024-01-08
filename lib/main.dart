@@ -26,6 +26,7 @@ class MyApp extends StatelessWidget {
         platform: TargetPlatform.iOS,
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
+      debugShowCheckedModeBanner: false,
       builder: BotToastInit(),
       navigatorObservers: [BotToastNavigatorObserver()],
       home: ScreenTypeLayout(

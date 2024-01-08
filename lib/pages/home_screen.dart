@@ -12,7 +12,9 @@ import 'package:homepad/pages/scene_screen.dart';
 import 'package:homepad/pages/vcr_screen.dart';
 import 'package:homepad/utils/Constant.dart';
 import 'package:homepad/utils/RouteHelper.dart';
+import 'package:homepad/utils/SizeUtils.dart';
 import 'package:homepad/widgets/WDot.dart';
+import 'package:homepad/widgets/bg_line.dart';
 import 'package:homepad/widgets/digital_clock/slide_digital_clock.dart';
 import 'package:homepad/widgets/panel.dart';
 import 'package:weather/weather.dart';
@@ -29,6 +31,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
   List<HotelListData> hotelList = HotelListData.hotelList;
   List<HomeList> homeList = HomeList.homeList;
   Weather? weather;
+  bool _visible = true;
   List<Weather> weathers = [];
   bool draggable = true;
   late WeatherFactory wf;
@@ -52,49 +55,55 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
     double w = MediaQuery.of(context).size.width;
     double h = MediaQuery.of(context).size.height;
     return Scaffold(
-      backgroundColor: const Color(0xFF1C2B3C),
       body: Container(
         alignment: Alignment.center,
         decoration: const BoxDecoration(
-            image: DecorationImage(image: AssetImage("assets/th.webp"))),
+            image: DecorationImage(
+                image: AssetImage("assets/th.webp"), fit: BoxFit.fill)),
         child: SlidingUpPanel(
           backdropEnabled: true,
-          parallaxEnabled: true,
+          // parallaxEnabled: true,
           isDraggable: draggable,
           controller: _panelController,
           slideDirection: SlideDirection.DOWN,
           color: Colors.transparent,
           boxShadow: [],
-          minHeight: 50,
+          minHeight: 70,
           maxHeight: 700,
           margin: const EdgeInsets.symmetric(horizontal: 500),
           collapsed: Container(
-            margin: const EdgeInsets.symmetric(horizontal: 300),
+            margin: const EdgeInsets.symmetric(horizontal: 380),
             child: GestureDetector(
               onTap: () {
                 _panelController.open();
               },
               child: Container(
-                decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.3),
-                    borderRadius: const BorderRadius.only(
-                        bottomLeft: Radius.circular(12),
-                        bottomRight: Radius.circular(12))),
+                decoration: const BoxDecoration(
+                  borderRadius: BorderRadius.only(
+                    bottomLeft: Radius.circular(12),
+                    bottomRight: Radius.circular(12),
+                  ),
+                  gradient: LinearGradient(
+                    begin: Alignment.bottomCenter,
+                    end: Alignment.topCenter,
+                    colors: [Color(0xff265890), Color(0xFF000000)],
+                    tileMode: TileMode.repeated,
+                  ),
+                ),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const Text(
-                      "Alerts   ",
-                      style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 24,
-                          fontWeight: FontWeight.bold),
+                    SvgPicture.asset(
+                      "assets/ic_i.svg",
+                      width: 44,
+                      height: 44,
                     ),
-                    WDot(
-                      showCount: true,
-                      count: 4,
-                      fontSize: 24,
-                      height: 36,
+                    const Text(
+                      " 12",
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 40,
+                      ),
                     ),
                   ],
                 ),
@@ -112,101 +121,288 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
               draggable = false;
             });
           },
-          body: Column(
+          body: Stack(
             children: [
-              const Expanded(child: SizedBox()),
-              ClipRect(
-                child: BackdropFilter(
-                  filter: ImageFilter.blur(sigmaX: 0.0, sigmaY: 0.0),
-                  child: Container(
-                    decoration:
-                        BoxDecoration(color: Colors.black.withOpacity(0.0)),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              GestureDetector(
+                onTap: () {
+                  setState(() {
+                    _visible = !_visible;
+                  });
+                },
+                child: AnimatedCrossFade(
+                  duration: const Duration(milliseconds: 500),
+                  crossFadeState: _visible
+                      ? CrossFadeState.showFirst
+                      : CrossFadeState.showSecond,
+                  firstChild: Container(
+                    decoration: const BoxDecoration(
+                        image: DecorationImage(
+                            image: AssetImage("assets/bg_cover.jpg"),
+                            fit: BoxFit.fill)),
+                    child: Column(
                       children: [
-                        Container(
-                          margin: const EdgeInsets.only(left: 50),
-                          child: weather == null
-                              ? const SizedBox()
-                              : Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      "${weather?.areaName}",
-                                      textScaler: TextScaler.linear(1),
-                                      style: const TextStyle(
-                                          fontSize: 60, color: Colors.white),
-                                    ),
-                                    Text(
-                                      "${weather?.temperature?.fahrenheit?.round()}°F",
-                                      textScaler: TextScaler.linear(1),
-                                      style: const TextStyle(
-                                          fontSize: 140, color: Colors.white),
-                                    ),
-                                    Text(
-                                      "${weathers[0].tempMin?.fahrenheit?.round()}°F ~ ${weathers[0].tempMax?.fahrenheit?.round()}°F",
-                                      style: const TextStyle(
-                                          fontSize: 60, color: Colors.white),
-                                    ),
-                                    Row(
-                                      children: [
-                                        Text(
-                                          "${weather?.weatherMain}",
-                                          textScaler: TextScaler.linear(1),
-                                          style: const TextStyle(
-                                              fontSize: 60,
-                                              color: Colors.white),
-                                        ),
-                                        Image.network(
-                                            "https://openweathermap.org/themes/openweathermap/assets/vendor/owm/img/widgets/${weather?.weatherIcon}.png"),
-                                      ],
+                        const Expanded(child: SizedBox()),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Container(
+                                width: 800,
+                                height: 400,
+                                alignment: Alignment.center,
+                                margin: const EdgeInsets.only(left: 80),
+                                decoration: BoxDecoration(
+                                  color: Colors.white.withOpacity(0.2),
+                                  borderRadius: const BorderRadius.all(
+                                      Radius.circular(20)),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.black.withOpacity(0.5),
+                                      offset: const Offset(0, 0),
+                                      blurRadius: 10.0,
+                                      spreadRadius: 10.0,
                                     ),
                                   ],
                                 ),
+                                child: weather == null
+                                    ? const SizedBox()
+                                    : Row(
+                                        children: [
+                                          Column(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                            children: [
+                                              Container(
+                                                width: 330,
+                                                height: 250,
+                                                padding: const EdgeInsets.only(
+                                                    left: 10,
+                                                    right: 10,
+                                                    bottom: 60),
+                                                child: Image.network(
+                                                  "https://openweathermap.org/themes/openweathermap/assets/vendor/owm/img/widgets/${weather?.weatherIcon}.png",
+                                                  fit: BoxFit.cover,
+                                                ),
+                                              ),
+                                              Container(
+                                                margin: const EdgeInsets.only(
+                                                    bottom: 20),
+                                                child: Text(
+                                                  "${weather?.areaName}",
+                                                  style: const TextStyle(
+                                                    fontSize: 50,
+                                                    color: Colors.white,
+                                                    shadows: [
+                                                      Shadow(
+                                                          color: Colors.black,
+                                                          blurRadius: 3,
+                                                          offset: Offset(3, 3))
+                                                    ],
+                                                  ),
+                                                ),
+                                              )
+                                            ],
+                                          ),
+                                          Column(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                            children: [
+                                              Container(
+                                                padding: const EdgeInsets.only(
+                                                    top: 30, bottom: 40),
+                                                child: Text(
+                                                  weathers.isEmpty
+                                                      ? ""
+                                                      : "${weathers[0].tempMin?.fahrenheit?.round()}°F ~ ${weathers[0].tempMax?.fahrenheit?.round()}°F",
+                                                  style: const TextStyle(
+                                                    fontSize: 80,
+                                                    color: Colors.white,
+                                                    shadows: [
+                                                      Shadow(
+                                                          color: Colors.black,
+                                                          blurRadius: 3,
+                                                          offset: Offset(3, 3))
+                                                    ],
+                                                  ),
+                                                ),
+                                              ),
+                                              Row(
+                                                children: [
+                                                  SvgPicture.asset(
+                                                    "assets/ic_humility.svg",
+                                                    width: 100,
+                                                    height: 100,
+                                                    colorFilter:
+                                                        const ColorFilter.mode(
+                                                            Colors.white,
+                                                            BlendMode.srcIn),
+                                                  ),
+                                                  Text(
+                                                    "${weather?.humidity?.round()}%",
+                                                    style: const TextStyle(
+                                                      fontSize: 120,
+                                                      color: Colors.white,
+                                                      shadows: [
+                                                        Shadow(
+                                                            color: Colors.black,
+                                                            blurRadius: 3,
+                                                            offset:
+                                                                Offset(3, 3))
+                                                      ],
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ],
+                                          ),
+                                        ],
+                                      )),
+                            Container(
+                              alignment: Alignment.center,
+                              margin: const EdgeInsets.only(right: 80),
+                              decoration: BoxDecoration(
+                                color: Colors.white.withOpacity(0.2),
+                                borderRadius:
+                                    const BorderRadius.all(Radius.circular(20)),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black.withOpacity(0.5),
+                                    offset: const Offset(0, 0),
+                                    blurRadius: 10.0,
+                                    spreadRadius: 10.0,
+                                  ),
+                                ],
+                              ),
+                              child: DigitalClock(
+                                areaWidth: 800,
+                                areaHeight: 400,
+                                digitAnimationStyle: Curves.elasticOut,
+                                is24HourTimeFormat: false,
+                                areaAligment: AlignmentDirectional.center,
+                                areaDecoration: const BoxDecoration(
+                                  color: Colors.transparent,
+                                ),
+                                hourMinuteDigitDecoration:
+                                    const BoxDecoration(),
+                                hourMinuteDigitTextStyle: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 200,
+                                  shadows: [
+                                    Shadow(
+                                        color: Colors.black,
+                                        blurRadius: 3,
+                                        offset: Offset(3, 3))
+                                  ],
+                                ),
+                                secondDigitDecoration: const BoxDecoration(),
+                                secondDigitTextStyle: const TextStyle(
+                                  fontSize: 80,
+                                  color: Colors.white,
+                                  shadows: [
+                                    Shadow(
+                                        color: Colors.black,
+                                        blurRadius: 3,
+                                        offset: Offset(3, 3))
+                                  ],
+                                ),
+                                amPmDigitTextStyle: const TextStyle(
+                                  fontSize: 70,
+                                  color: Colors.white,
+                                  shadows: [
+                                    Shadow(
+                                        color: Colors.black,
+                                        blurRadius: 3,
+                                        offset: Offset(3, 3))
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
-                        Container(
-                          width: w / 2,
-                          child: DigitalClock(
-                            digitAnimationStyle: Curves.elasticOut,
-                            is24HourTimeFormat: false,
-                            areaAligment: AlignmentDirectional.center,
-                            areaDecoration: const BoxDecoration(
-                              color: Colors.transparent,
+                        const Expanded(child: SizedBox()),
+                        Stack(
+                          alignment: Alignment.bottomCenter,
+                          children: [
+                            CustomPaint(
+                              size: const Size(1400, 300),
+                              painter: MyPainter(),
                             ),
-                            hourMinuteDigitDecoration: const BoxDecoration(),
-                            hourMinuteDigitTextStyle: const TextStyle(
-                              color: Colors.white,
-                              fontSize: 240,
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                getFuncBtn("ic_vcr.jpg", () {
+                                  RouteHelper.pushWidget(context, MyAreaPage());
+                                }),
+                                getFuncBtn("ic_live.jpg", () {
+                                  RouteHelper.pushWidget(
+                                      context, MyCameraPage());
+                                }),
+                                Stack(
+                                  alignment: Alignment.center,
+                                  children: [
+                                    getFuncBtn("ic_ring.jpg", () {
+                                      RouteHelper.pushWidget(
+                                          context, MyVcrPage());
+                                    }),
+                                    Container(
+                                      margin: const EdgeInsets.only(
+                                          bottom: 120, left: 50),
+                                      child: WDot(
+                                        showCount: true,
+                                        count: 12,
+                                        fontSize: 24,
+                                        height: 40,
+                                      ),
+                                    )
+                                  ],
+                                ),
+                                getFuncBtn("ic_setting.jpg", () {
+                                  RouteHelper.pushWidget(
+                                      context, MyScenePage());
+                                }),
+                              ],
                             ),
-                            secondDigitDecoration: const BoxDecoration(),
-                            amPmDigitTextStyle: const TextStyle(
-                                fontSize: 60,
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold),
-                          ),
+                          ],
                         ),
                       ],
                     ),
                   ),
+                  secondChild: Container(
+                    width: w,
+                    height: h,
+                    color: Colors.transparent,
+                  ),
                 ),
               ),
-              const Expanded(child: SizedBox()),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  getFuncBtn("ic_floor.svg", () {
-                    RouteHelper.pushWidget(context, MyAreaPage());
-                  }),
-                  getFuncBtn("ic_camera.svg", () {
-                    RouteHelper.pushWidget(context, MyCameraPage());
-                  }),
-                  getFuncBtn("ic_record.svg", () {
-                    RouteHelper.pushWidget(context, MyVcrPage());
-                  }),
-                  getFuncBtn("ic_setting.svg", () {
-                    RouteHelper.pushWidget(context, MyScenePage());
-                  }),
-                ],
+              Container(
+                height: 50,
+                color: Colors.black.withOpacity(0.5),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    Container(
+                      width: 50,
+                      alignment: Alignment.center,
+                      child: SvgPicture.asset(
+                        "assets/ic_signal_f.svg",
+                        width: 30,
+                        height: 30,
+                        colorFilter: const ColorFilter.mode(
+                            Colors.white, BlendMode.srcIn),
+                      ),
+                    ),
+                    Container(
+                      width: 64,
+                      alignment: Alignment.center,
+                      child: SvgPicture.asset(
+                        "assets/ic_battery.svg",
+                        width: 40,
+                        height: 40,
+                        colorFilter: const ColorFilter.mode(
+                            Colors.white, BlendMode.srcIn),
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ],
           ),
@@ -217,7 +413,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
 
   Widget _scrollingList(ScrollController sc) {
     return Container(
-      margin: const EdgeInsets.only(bottom: 50),
+      margin: const EdgeInsets.only(bottom: 70),
       child: ClipRect(
         child: BackdropFilter(
           filter: ImageFilter.blur(sigmaX: 10.0, sigmaY: 10.0),
@@ -229,7 +425,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                     bottomRight: Radius.circular(16))),
             child: Container(
               height: 650,
-              padding: EdgeInsets.all(20),
+              padding: const EdgeInsets.all(20),
               child: ListView.builder(
                 itemCount: hotelList.length,
                 scrollDirection: Axis.vertical,
@@ -260,32 +456,16 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
 
   Widget getFuncBtn(String icon, Function click) {
     return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 40),
-      child: ClipRect(
-        child: BackdropFilter(
-          filter: ImageFilter.blur(sigmaX: 10.0, sigmaY: 10.0),
-          child: GestureDetector(
-            child: Container(
-              width: 120,
-              height: 120,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(60),
-                color: Colors.grey.shade200.withOpacity(0.3),
-              ),
-              alignment: Alignment.center,
-              child: SvgPicture.asset(
-                "assets/$icon",
-                width: 60,
-                height: 60,
-                colorFilter:
-                    const ColorFilter.mode(Colors.white, BlendMode.srcIn),
-              ),
-            ),
-            onTap: () {
-              click.call();
-            },
-          ),
-        ),
+      margin: const EdgeInsets.symmetric(horizontal: 60, vertical: 120),
+      child: GestureDetector(
+        child: Container(
+            width: 200,
+            height: 200,
+            alignment: Alignment.center,
+            child: Image.asset("assets/$icon")),
+        onTap: () {
+          click.call();
+        },
       ),
     );
   }
