@@ -21,6 +21,7 @@ class MyCameraPage extends StatefulWidget {
 class _MyCameraPageState extends State<MyCameraPage>
     with TickerProviderStateMixin {
   List infos = [];
+  List<FileSystemEntity> fileList = [];
   Map currect = {};
   AnimationController? animationController;
   DBusClient dbClient = DBusClient.system();
@@ -32,12 +33,28 @@ class _MyCameraPageState extends State<MyCameraPage>
         duration: const Duration(milliseconds: 1000), vsync: this);
     var file = File('nb/camlist.json');
     file.readAsString().then((String contents) {
-      setState(() {
-        infos = json.decode(contents) ?? [];
-        if (infos.isNotEmpty) {
-          currect = infos[0];
+      infos = json.decode(contents) ?? [];
+      if (infos.isNotEmpty) {
+        currect = infos[0];
+      }
+      fileList = Directory('nb').listSync();
+      for (Map info in infos) {
+        for (FileSystemEntity fileSystemEntity in fileList) {
+          // String a = info['uid'].toRadixString(16);
+          String uid = info['uid'].toString().padLeft(8, '0');
+
+          if (fileSystemEntity.path.contains(uid)) {
+            if (fileSystemEntity.path.endsWith("jpg") ||
+                fileSystemEntity.path.endsWith("jpeg") ||
+                fileSystemEntity.path.endsWith("png")) {
+              info['pre'] = fileSystemEntity.path;
+              print("$uid");
+              print("$info");
+            }
+          }
         }
-      });
+      }
+      setState(() {});
     });
   }
 
@@ -49,7 +66,7 @@ class _MyCameraPageState extends State<MyCameraPage>
       body: Container(
         decoration: BoxDecoration(
           color: Colors.black.withOpacity(0.7),
-          image: DecorationImage(
+          image: const DecorationImage(
             image: AssetImage('assets/bg_cover.jpg'),
             fit: BoxFit.fill,
           ),
@@ -61,11 +78,11 @@ class _MyCameraPageState extends State<MyCameraPage>
               color: Colors.black,
               child: Row(
                 children: [
-                  Expanded(
+                  const Expanded(
                     child: Text(
                       "02:05  am",
                       textAlign: TextAlign.center,
-                      style: const TextStyle(color: Colors.white, fontSize: 20),
+                      style: TextStyle(color: Colors.white, fontSize: 20),
                     ),
                   ),
                   Container(
@@ -78,19 +95,19 @@ class _MyCameraPageState extends State<MyCameraPage>
                           alignment: Alignment.center,
                           child: SvgPicture.asset(
                             "assets/ic_signal_f.svg",
-                            width: 30,
-                            height: 30,
+                            width: 40,
+                            height: 40,
                             colorFilter: const ColorFilter.mode(
                                 Colors.white, BlendMode.srcIn),
                           ),
                         ),
                         Container(
-                          width: 64,
+                          width: 80,
                           alignment: Alignment.center,
                           child: SvgPicture.asset(
                             "assets/ic_battery.svg",
-                            width: 40,
-                            height: 40,
+                            width: 50,
+                            height: 50,
                             colorFilter: const ColorFilter.mode(
                                 Colors.white, BlendMode.srcIn),
                           ),
@@ -144,9 +161,9 @@ class _MyCameraPageState extends State<MyCameraPage>
                                   children: [
                                     Expanded(
                                         child: Container(
-                                      padding:
-                                          EdgeInsets.symmetric(horizontal: 20),
-                                      child: Text(
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 20),
+                                      child: const Text(
                                         'Position.Layer.Name',
                                         style: TextStyle(
                                             fontSize: 24, color: Colors.white),
@@ -175,10 +192,10 @@ class _MyCameraPageState extends State<MyCameraPage>
                         Expanded(
                           child: Container(
                               alignment: Alignment.topCenter,
-                              padding: EdgeInsets.only(left: 20),
+                              padding: const EdgeInsets.only(left: 20),
                               child: ClipRRect(
                                 borderRadius:
-                                    BorderRadius.all(Radius.circular(10)),
+                                    const BorderRadius.all(Radius.circular(10)),
                                 child: AspectRatio(
                                   aspectRatio: 16 / 9,
                                   child: Container(
@@ -202,7 +219,7 @@ class _MyCameraPageState extends State<MyCameraPage>
                   Container(
                     width: w * 0.15,
                     color: Colors.black,
-                    margin: EdgeInsets.only(left: 20),
+                    margin: const EdgeInsets.only(left: 20),
                     child: Column(
                       children: [
                         NeumorphicButton(
@@ -213,7 +230,7 @@ class _MyCameraPageState extends State<MyCameraPage>
                             boxShape: NeumorphicBoxShape.roundRect(
                               BorderRadius.circular(8),
                             ),
-                            color: Color(0xff1c1c1e),
+                            color: const Color(0xff1c1c1e),
                             shadowLightColor: Colors.transparent,
                             shape: NeumorphicShape.flat,
                           ),
@@ -221,11 +238,11 @@ class _MyCameraPageState extends State<MyCameraPage>
                             aspectRatio: 16 / 9,
                             child: Container(
                               alignment: Alignment.center,
-                              child: Text(
-                                "Add new camera",
-                                style: const TextStyle(
-                                    fontWeight: FontWeight.w600,
-                                    fontSize: 20,
+                              child: const Text(
+                                "+",
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 80,
                                     color: Colors.white),
                               ),
                             ),
@@ -409,31 +426,32 @@ class HomeListView extends StatelessWidget {
         boxShape: NeumorphicBoxShape.roundRect(
           BorderRadius.circular(8),
         ),
-        color: Colors.white70,
+        color: Colors.white30,
         shadowLightColor: Colors.transparent,
         shape: NeumorphicShape.flat,
       ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          SvgPicture.asset(
-            "assets/ic_camera.svg",
-            width: 60,
-            height: 60,
-            colorFilter: const ColorFilter.mode(
-                Color.fromARGB(255, 202, 97, 4), BlendMode.srcIn),
-          ),
-          Container(
-            margin: const EdgeInsets.only(left: 12),
-            child: Text(
-              listData['loc'],
-              style: const TextStyle(
-                fontWeight: FontWeight.w600,
-                fontSize: 28,
+      child: Container(
+        decoration: BoxDecoration(
+          image: listData['pre'] == null
+              ? const DecorationImage(
+                  image: AssetImage('assets/bg_vcr.jpg'), fit: BoxFit.fill)
+              : DecorationImage(
+                  image: FileImage(File(listData['pre'])), fit: BoxFit.fill),
+        ),
+        child: Stack(
+          children: [
+            Container(
+              margin: const EdgeInsets.only(left: 12),
+              child: Text(
+                listData['loc'],
+                style: const TextStyle(
+                    fontWeight: FontWeight.w600,
+                    fontSize: 28,
+                    color: Colors.white),
               ),
-            ),
-          )
-        ],
+            )
+          ],
+        ),
       ),
       onPressed: () {
         callBack?.call();

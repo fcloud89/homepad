@@ -18,22 +18,12 @@ import 'package:homepad/widgets/back_button.dart';
 import 'package:homepad/widgets/custom_calendar.dart';
 import 'package:homepad/widgets/video_popup_view.dart';
 
-class MyVcrPage extends StatelessWidget {
+class MyVcrPage extends StatefulWidget {
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: const Color.fromRGBO(39, 72, 98, 1),
-      body: _MyVcrPage(),
-    );
-  }
+  State<MyVcrPage> createState() => _MyVcrPageState();
 }
 
-class _MyVcrPage extends StatefulWidget {
-  @override
-  State<_MyVcrPage> createState() => _MyVcrPageState();
-}
-
-class _MyVcrPageState extends State<_MyVcrPage> with TickerProviderStateMixin {
+class _MyVcrPageState extends State<MyVcrPage> with TickerProviderStateMixin {
   List ritems = [];
   List infos = [];
   DateTime? minimumDate;
@@ -109,226 +99,326 @@ class _MyVcrPageState extends State<_MyVcrPage> with TickerProviderStateMixin {
   Widget build(BuildContext context) {
     double w = MediaQuery.of(context).size.width;
     double h = MediaQuery.of(context).size.height;
-    return Row(children: [
-      Expanded(
-        child: Column(
-          children: [
-            Container(
-              height: 70,
-              color: const Color.fromRGBO(23, 44, 60, 1),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  GestureDetector(
-                    child: const Padding(
-                      padding:
-                          EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                      child: Icon(
-                        Icons.arrow_back,
-                        color: Colors.white70,
-                        size: 44,
-                      ),
-                    ),
-                    onTap: () {
-                      Navigator.of(context).pop();
-                    },
-                  ),
-                  const Text(
-                    "vcr list",
-                    style: TextStyle(color: Colors.white70, fontSize: 30),
-                  ),
-                  GestureDetector(
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 20, vertical: 10),
-                    ),
-                  ),
-                ],
-              ),
+    return Scaffold(
+      body: Container(
+          decoration: BoxDecoration(
+            color: Colors.black.withOpacity(0.7),
+            image: const DecorationImage(
+              image: AssetImage('assets/bg_cover.jpg'),
+              fit: BoxFit.fill,
             ),
-            Container(
-              height: 150,
-              padding: const EdgeInsets.symmetric(horizontal: 10),
-              child: Row(
-                children: [
-                  Expanded(
-                    child: GridView(
-                      physics: const BouncingScrollPhysics(),
-                      scrollDirection: Axis.horizontal,
-                      gridDelegate:
-                          const SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 1,
-                        mainAxisSpacing: 0.0,
-                        crossAxisSpacing: 0.0,
-                        childAspectRatio: 9 / 16,
+          ),
+          child: Column(
+            children: [
+              Container(
+                height: 70,
+                color: Colors.black,
+                child: Row(
+                  children: [
+                    const Expanded(
+                      child: Text(
+                        "02:05  am",
+                        textAlign: TextAlign.center,
+                        style: TextStyle(color: Colors.white, fontSize: 20),
                       ),
-                      children: List<Widget>.generate(
-                        ritems.length,
-                        (int index) {
-                          final int count = ritems.length;
-                          final Animation<double> animation =
-                              Tween<double>(begin: 0.0, end: 1.0).animate(
-                            CurvedAnimation(
-                              parent: animationController!,
-                              curve: Interval((1 / count) * index, 1.0,
-                                  curve: Curves.fastOutSlowIn),
+                    ),
+                    Container(
+                      width: w * 0.15,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          Container(
+                            width: 50,
+                            alignment: Alignment.center,
+                            child: SvgPicture.asset(
+                              "assets/ic_signal_f.svg",
+                              width: 40,
+                              height: 40,
+                              colorFilter: const ColorFilter.mode(
+                                  Colors.white, BlendMode.srcIn),
                             ),
-                          );
-                          animationController?.forward();
-                          return HomeListView(
-                            animation: animation,
-                            animationController: animationController,
-                            listData: ritems[index],
-                            callBack: () {
-                              infos.clear();
-                              String pathImg = "";
-                              for (FileSystemEntity fileSystemEntity
-                                  in fileList) {
-                                String a =
-                                    ritems[index]['uid'].toRadixString(16);
-                                String uid = a.padLeft(8, '0');
-                                if (fileSystemEntity.path.contains(uid)) {
-                                  if (fileSystemEntity.path.endsWith("jpg") ||
-                                      fileSystemEntity.path.endsWith("jpeg") ||
-                                      fileSystemEntity.path.endsWith("png")) {
-                                    pathImg = fileSystemEntity.path;
-                                  }
-                                  if (fileSystemEntity.path.endsWith("info")) {
-                                    File i = File(fileSystemEntity.path);
-                                    i.readAsString().then((String contents) {
-                                      Map info = json.decode(contents) ?? {};
-                                      info['img'] = pathImg;
-                                      print(info);
-                                      setState(() {
-                                        infos.add(info);
-                                      });
-                                    });
-                                  }
-                                }
-                              }
-                              setState(() {});
-                            },
-                          );
-                        },
+                          ),
+                          Container(
+                            width: 80,
+                            alignment: Alignment.center,
+                            child: SvgPicture.asset(
+                              "assets/ic_battery.svg",
+                              width: 50,
+                              height: 50,
+                              colorFilter: const ColorFilter.mode(
+                                  Colors.white, BlendMode.srcIn),
+                            ),
+                          ),
+                        ],
                       ),
                     ),
-                  )
-                ],
-              ),
-            ),
-            Container(
-              height: 5,
-              color: Colors.white,
-            ),
-            Expanded(
-              child: Container(
-                padding: const EdgeInsets.all(5),
-                child: GridView(
-                  physics: const BouncingScrollPhysics(),
-                  scrollDirection: Axis.vertical,
-                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    mainAxisSpacing: 0.0,
-                    crossAxisSpacing: 0.0,
-                    childAspectRatio: 21 / 9,
-                    crossAxisCount: 2,
-                  ),
-                  children: List<Widget>.generate(
-                    infos.length,
-                    (int index) {
-                      final int count = infos.length;
-                      final Animation<double> animation =
-                          Tween<double>(begin: 0.0, end: 1.0).animate(
-                        CurvedAnimation(
-                          parent: animationController!,
-                          curve: Interval((1 / count) * index, 1.0,
-                              curve: Curves.fastOutSlowIn),
-                        ),
-                      );
-                      animationController?.forward();
-                      return VcrListView(
-                        animation: animation,
-                        animationController: animationController,
-                        listData: infos[index],
-                        callBack: () {
-                          for (FileSystemEntity fileSystemEntity in fileList) {
-                            String a = ritems[index]['uid'].toRadixString(16);
-                            String uid = a.padLeft(8, '0');
-                            if (fileSystemEntity.path.endsWith("mp4") &&
-                                fileSystemEntity.path.contains(uid)) {
-                              showDialog<dynamic>(
-                                context: context!,
-                                builder: (BuildContext context) => VideoPopupView(
-                                    url:
-                                        // 'rtsp://admin:Admin123@172.17.33.24:80/ch0_0.264',
-                                        // 'assets/video/test.mp4',
-                                        fileSystemEntity.path),
-                              );
-                            }
-                          }
-                        },
-                      );
-                    },
-                  ),
+                  ],
                 ),
               ),
-            ),
-          ],
-        ),
-      ),
-      // Container(
-      //   width: 1,
-      //   color: Colors.white70,
-      // ),
-      Container(
-        width: w * 0.25,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Container(
-              height: 70,
-              color: const Color.fromRGBO(23, 44, 60, 1),
-              alignment: Alignment.center,
-              child: const Text(
-                "camera list",
-                style: TextStyle(color: Colors.white70, fontSize: 24),
-              ),
-            ),
-            Container(
-              color: Colors.white70,
-              child: CustomCalendarView(
-                minimumDate: minimumDate,
-                maximumDate: maximumDate,
-                initialEndDate: initialEndDate,
-                initialStartDate: initialStartDate,
-                startEndDateChange:
-                    (DateTime startDateData, DateTime endDateData) {
-                  setState(() {
-                    startDate = startDateData;
-                    endDate = endDateData;
-                  });
-                },
-              ),
-            ),
-            Expanded(
-              child: Container(
-                color: Colors.white70,
-                alignment: Alignment.center,
-                padding: const EdgeInsets.symmetric(vertical: 20),
-                child: const Column(children: [
-                  Text(
-                    "vcr info",
-                    style: TextStyle(
-                        color: Colors.black87,
-                        fontSize: 28,
-                        fontWeight: FontWeight.bold),
+              Expanded(
+                child: Row(children: [
+                  Expanded(
+                    child: Column(
+                      children: [
+                        Row(
+                          children: [
+                            GestureDetector(
+                              onTap: () {
+                                Navigator.of(context).pop();
+                              },
+                              child: Container(
+                                width: 50,
+                                height: 50,
+                                alignment: Alignment.center,
+                                margin: const EdgeInsets.all(20),
+                                decoration: const BoxDecoration(
+                                  color: Color(0xff3f3f3f),
+                                  borderRadius:
+                                      BorderRadius.all(Radius.circular(10)),
+                                ),
+                                child: SvgPicture.asset(
+                                  "assets/ic_return.svg",
+                                  width: 30,
+                                  height: 30,
+                                  colorFilter: const ColorFilter.mode(
+                                      Colors.white, BlendMode.srcIn),
+                                ),
+                              ),
+                            ),
+                            Expanded(
+                              child: Container(
+                                height: 50,
+                                decoration: const BoxDecoration(
+                                  color: Colors.black,
+                                  borderRadius:
+                                      BorderRadius.all(Radius.circular(10)),
+                                ),
+                                child: Row(
+                                  children: [
+                                    Expanded(
+                                        child: Container(
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 20),
+                                      child: const Text(
+                                        '',
+                                        style: TextStyle(
+                                            fontSize: 24, color: Colors.white),
+                                      ),
+                                    )),
+                                    // GestureDetector(
+                                    //   child: Padding(
+                                    //     padding: const EdgeInsets.symmetric(
+                                    //         horizontal: 10, vertical: 10),
+                                    //     child: SvgPicture.asset(
+                                    //       "assets/ic_info.svg",
+                                    //       width: 40,
+                                    //       height: 40,
+                                    //       colorFilter: const ColorFilter.mode(
+                                    //           Colors.white, BlendMode.srcIn),
+                                    //     ),
+                                    //   ),
+                                    //   onTap: () {},
+                                    // ),
+                                  ],
+                                ),
+                              ),
+                            )
+                          ],
+                        ),
+                        Container(
+                          height: 150,
+                          padding: const EdgeInsets.symmetric(horizontal: 10),
+                          child: Row(
+                            children: [
+                              Expanded(
+                                child: GridView(
+                                  physics: const BouncingScrollPhysics(),
+                                  scrollDirection: Axis.horizontal,
+                                  gridDelegate:
+                                      const SliverGridDelegateWithFixedCrossAxisCount(
+                                    crossAxisCount: 1,
+                                    mainAxisSpacing: 0.0,
+                                    crossAxisSpacing: 0.0,
+                                    childAspectRatio: 9 / 16,
+                                  ),
+                                  children: List<Widget>.generate(
+                                    ritems.length,
+                                    (int index) {
+                                      final int count = ritems.length;
+                                      final Animation<double> animation =
+                                          Tween<double>(begin: 0.0, end: 1.0)
+                                              .animate(
+                                        CurvedAnimation(
+                                          parent: animationController!,
+                                          curve: Interval(
+                                              (1 / count) * index, 1.0,
+                                              curve: Curves.fastOutSlowIn),
+                                        ),
+                                      );
+                                      animationController?.forward();
+                                      return HomeListView(
+                                        animation: animation,
+                                        animationController:
+                                            animationController,
+                                        listData: ritems[index],
+                                        callBack: () {
+                                          infos.clear();
+                                          String pathImg = "";
+                                          for (FileSystemEntity fileSystemEntity
+                                              in fileList) {
+                                            String a = ritems[index]['uid']
+                                                .toRadixString(16);
+                                            String uid = a.padLeft(8, '0');
+                                            if (fileSystemEntity.path
+                                                .contains(uid)) {
+                                              if (fileSystemEntity.path
+                                                      .endsWith("jpg") ||
+                                                  fileSystemEntity.path
+                                                      .endsWith("jpeg") ||
+                                                  fileSystemEntity.path
+                                                      .endsWith("png")) {
+                                                pathImg = fileSystemEntity.path;
+                                              }
+                                              if (fileSystemEntity.path
+                                                  .endsWith("info")) {
+                                                File i =
+                                                    File(fileSystemEntity.path);
+                                                i
+                                                    .readAsString()
+                                                    .then((String contents) {
+                                                  Map info =
+                                                      json.decode(contents) ??
+                                                          {};
+                                                  info['img'] = pathImg;
+                                                  print(info);
+                                                  setState(() {
+                                                    infos.add(info);
+                                                  });
+                                                });
+                                              }
+                                            }
+                                          }
+                                          setState(() {});
+                                        },
+                                      );
+                                    },
+                                  ),
+                                ),
+                              )
+                            ],
+                          ),
+                        ),
+                        Container(
+                          height: 5,
+                          color: Colors.white,
+                        ),
+                        Expanded(
+                          child: Container(
+                            padding: const EdgeInsets.all(5),
+                            child: GridView(
+                              physics: const BouncingScrollPhysics(),
+                              scrollDirection: Axis.vertical,
+                              gridDelegate:
+                                  const SliverGridDelegateWithMaxCrossAxisExtent(
+                                mainAxisSpacing: 0.0,
+                                crossAxisSpacing: 0.0,
+                                childAspectRatio: 21 / 9,
+                                maxCrossAxisExtent: 540,
+                              ),
+                              children: List<Widget>.generate(
+                                infos.length,
+                                (int index) {
+                                  final int count = infos.length;
+                                  final Animation<double> animation =
+                                      Tween<double>(begin: 0.0, end: 1.0)
+                                          .animate(
+                                    CurvedAnimation(
+                                      parent: animationController!,
+                                      curve: Interval((1 / count) * index, 1.0,
+                                          curve: Curves.fastOutSlowIn),
+                                    ),
+                                  );
+                                  animationController?.forward();
+                                  return VcrListView(
+                                    animation: animation,
+                                    animationController: animationController,
+                                    listData: infos[index],
+                                    callBack: () {
+                                      for (FileSystemEntity fileSystemEntity
+                                          in fileList) {
+                                        String a = ritems[index]['uid']
+                                            .toRadixString(16);
+                                        String uid = a.padLeft(8, '0');
+                                        if (fileSystemEntity.path
+                                                .endsWith("mp4") &&
+                                            fileSystemEntity.path
+                                                .contains(uid)) {
+                                          showDialog<dynamic>(
+                                            context: context!,
+                                            builder: (BuildContext context) =>
+                                                VideoPopupView(
+                                                    url:
+                                                        // 'rtsp://admin:Admin123@172.17.33.24:80/ch0_0.264',
+                                                        // 'assets/video/test.mp4',
+                                                        fileSystemEntity.path),
+                                          );
+                                        }
+                                      }
+                                    },
+                                  );
+                                },
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Container(
+                    width: w * 0.25,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Container(
+                          color: Colors.white70,
+                          child: CustomCalendarView(
+                            minimumDate: minimumDate,
+                            maximumDate: maximumDate,
+                            initialEndDate: initialEndDate,
+                            initialStartDate: initialStartDate,
+                            startEndDateChange:
+                                (DateTime startDateData, DateTime endDateData) {
+                              setState(() {
+                                startDate = startDateData;
+                                endDate = endDateData;
+                              });
+                            },
+                          ),
+                        ),
+                        Expanded(
+                          child: Container(
+                            color: Colors.white70,
+                            alignment: Alignment.center,
+                            padding: const EdgeInsets.symmetric(vertical: 20),
+                            child: const Column(children: [
+                              Text(
+                                "vcr info",
+                                style: TextStyle(
+                                    color: Colors.black87,
+                                    fontSize: 28,
+                                    fontWeight: FontWeight.bold),
+                              ),
+                            ]),
+                          ),
+                        )
+                      ],
+                    ),
                   ),
                 ]),
-              ),
-            )
-          ],
-        ),
-      ),
-    ]);
+              )
+            ],
+          )),
+    );
   }
 
   Widget getCameraListWidget(list) {

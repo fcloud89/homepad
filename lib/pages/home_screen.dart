@@ -384,19 +384,19 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                       alignment: Alignment.center,
                       child: SvgPicture.asset(
                         "assets/ic_signal_f.svg",
-                        width: 30,
-                        height: 30,
+                        width: 40,
+                        height: 40,
                         colorFilter: const ColorFilter.mode(
                             Colors.white, BlendMode.srcIn),
                       ),
                     ),
                     Container(
-                      width: 64,
+                      width: 80,
                       alignment: Alignment.center,
                       child: SvgPicture.asset(
                         "assets/ic_battery.svg",
-                        width: 40,
-                        height: 40,
+                        width: 50,
+                        height: 50,
                         colorFilter: const ColorFilter.mode(
                             Colors.white, BlendMode.srcIn),
                       ),
