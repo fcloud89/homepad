@@ -101,19 +101,169 @@ class _MyVcrPageState extends State<MyVcrPage> with TickerProviderStateMixin {
     double h = MediaQuery.of(context).size.height;
     return Scaffold(
       body: Container(
-          decoration: BoxDecoration(
-            color: Colors.black.withOpacity(0.7),
-            image: const DecorationImage(
-              image: AssetImage('assets/bg_cover.jpg'),
-              fit: BoxFit.fill,
+        decoration: BoxDecoration(
+          color: Colors.black.withOpacity(0.5),
+          image: const DecorationImage(
+            image: AssetImage('assets/bg_cover.jpg'),
+            fit: BoxFit.fill,
+          ),
+        ),
+        child: Row(children: [
+          Expanded(
+            child: Column(
+              children: [
+                Container(
+                  height: 200,
+                  child: Stack(
+                    children: [
+                      ListView(
+                        padding: EdgeInsets.only(left: 80),
+                        physics: const BouncingScrollPhysics(),
+                        scrollDirection: Axis.horizontal,
+                        children: List<Widget>.generate(
+                          ritems.length,
+                          (int index) {
+                            final int count = ritems.length;
+                            final Animation<double> animation =
+                                Tween<double>(begin: 0.0, end: 1.0).animate(
+                              CurvedAnimation(
+                                parent: animationController!,
+                                curve: Interval((1 / count) * index, 1.0,
+                                    curve: Curves.fastOutSlowIn),
+                              ),
+                            );
+                            animationController?.forward();
+                            return HomeListView(
+                              animation: animation,
+                              animationController: animationController,
+                              listData: ritems[index],
+                              callBack: () {
+                                infos.clear();
+                                String pathImg = "";
+                                for (FileSystemEntity fileSystemEntity
+                                    in fileList) {
+                                  String a =
+                                      ritems[index]['uid'].toRadixString(16);
+                                  String uid = a.padLeft(8, '0');
+                                  if (fileSystemEntity.path.contains(uid)) {
+                                    if (fileSystemEntity.path.endsWith("jpg") ||
+                                        fileSystemEntity.path
+                                            .endsWith("jpeg") ||
+                                        fileSystemEntity.path.endsWith("png")) {
+                                      pathImg = fileSystemEntity.path;
+                                    }
+                                    if (fileSystemEntity.path
+                                        .endsWith("info")) {
+                                      File i = File(fileSystemEntity.path);
+                                      i.readAsString().then((String contents) {
+                                        Map info = json.decode(contents) ?? {};
+                                        info['img'] = pathImg;
+                                        print(info);
+                                        setState(() {
+                                          infos.add(info);
+                                        });
+                                      });
+                                    }
+                                  }
+                                }
+                                setState(() {});
+                              },
+                            );
+                          },
+                        ),
+                      ),
+                      Image.asset('assets/bg_vcr_head.jpg'),
+                      GestureDetector(
+                        onTap: () {
+                          Navigator.of(context).pop();
+                        },
+                        child: Align(
+                          alignment: Alignment.topLeft,
+                          child: Container(
+                            width: 60,
+                            height: 80,
+                            color: Colors.transparent,
+                            alignment: Alignment.center,
+                            padding: const EdgeInsets.only(left: 20, top: 10),
+                            child: SvgPicture.asset(
+                              "assets/ic_return.svg",
+                              width: 30,
+                              height: 30,
+                              colorFilter: const ColorFilter.mode(
+                                  Colors.white, BlendMode.srcIn),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                Expanded(
+                  child: Container(
+                    padding: const EdgeInsets.all(5),
+                    child: GridView(
+                      physics: const BouncingScrollPhysics(),
+                      scrollDirection: Axis.vertical,
+                      gridDelegate:
+                          const SliverGridDelegateWithMaxCrossAxisExtent(
+                        mainAxisSpacing: 0.0,
+                        crossAxisSpacing: 0.0,
+                        childAspectRatio: 21 / 9,
+                        maxCrossAxisExtent: 540,
+                      ),
+                      children: List<Widget>.generate(
+                        infos.length,
+                        (int index) {
+                          final int count = infos.length;
+                          final Animation<double> animation =
+                              Tween<double>(begin: 0.0, end: 1.0).animate(
+                            CurvedAnimation(
+                              parent: animationController!,
+                              curve: Interval((1 / count) * index, 1.0,
+                                  curve: Curves.fastOutSlowIn),
+                            ),
+                          );
+                          animationController?.forward();
+                          return VcrListView(
+                            animation: animation,
+                            animationController: animationController,
+                            listData: infos[index],
+                            callBack: () {
+                              for (FileSystemEntity fileSystemEntity
+                                  in fileList) {
+                                String a =
+                                    ritems[index]['uid'].toRadixString(16);
+                                String uid = a.padLeft(8, '0');
+                                if (fileSystemEntity.path.endsWith("mp4") &&
+                                    fileSystemEntity.path.contains(uid)) {
+                                  showDialog<dynamic>(
+                                    context: context!,
+                                    builder: (BuildContext context) =>
+                                        VideoPopupView(
+                                            url:
+                                                // 'rtsp://admin:Admin123@172.17.33.24:80/ch0_0.264',
+                                                // 'assets/video/test.mp4',
+                                                fileSystemEntity.path),
+                                  );
+                                }
+                              }
+                            },
+                          );
+                        },
+                      ),
+                    ),
+                  ),
+                ),
+              ],
             ),
           ),
-          child: Column(
-            children: [
-              Container(
-                height: 70,
-                color: Colors.black,
-                child: Row(
+          Container(
+            width: w * 0.18,
+            color: Colors.black,
+            child: Column(
+              children: [
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     const Expanded(
                       child: Text(
@@ -123,301 +273,67 @@ class _MyVcrPageState extends State<MyVcrPage> with TickerProviderStateMixin {
                       ),
                     ),
                     Container(
-                      width: w * 0.15,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: [
-                          Container(
-                            width: 50,
-                            alignment: Alignment.center,
-                            child: SvgPicture.asset(
-                              "assets/ic_signal_f.svg",
-                              width: 40,
-                              height: 40,
-                              colorFilter: const ColorFilter.mode(
-                                  Colors.white, BlendMode.srcIn),
-                            ),
-                          ),
-                          Container(
-                            width: 80,
-                            alignment: Alignment.center,
-                            child: SvgPicture.asset(
-                              "assets/ic_battery.svg",
-                              width: 50,
-                              height: 50,
-                              colorFilter: const ColorFilter.mode(
-                                  Colors.white, BlendMode.srcIn),
-                            ),
-                          ),
-                        ],
+                      width: 50,
+                      height: 60,
+                      alignment: Alignment.center,
+                      child: SvgPicture.asset(
+                        "assets/ic_signal_f.svg",
+                        width: 40,
+                        height: 40,
+                        colorFilter: const ColorFilter.mode(
+                            Colors.white, BlendMode.srcIn),
+                      ),
+                    ),
+                    Container(
+                      width: 80,
+                      alignment: Alignment.center,
+                      child: SvgPicture.asset(
+                        "assets/ic_battery.svg",
+                        width: 50,
+                        height: 50,
+                        colorFilter: const ColorFilter.mode(
+                            Colors.white, BlendMode.srcIn),
                       ),
                     ),
                   ],
                 ),
-              ),
-              Expanded(
-                child: Row(children: [
-                  Expanded(
-                    child: Column(
-                      children: [
-                        Row(
-                          children: [
-                            GestureDetector(
-                              onTap: () {
-                                Navigator.of(context).pop();
-                              },
-                              child: Container(
-                                width: 50,
-                                height: 50,
-                                alignment: Alignment.center,
-                                margin: const EdgeInsets.all(20),
-                                decoration: const BoxDecoration(
-                                  color: Color(0xff3f3f3f),
-                                  borderRadius:
-                                      BorderRadius.all(Radius.circular(10)),
-                                ),
-                                child: SvgPicture.asset(
-                                  "assets/ic_return.svg",
-                                  width: 30,
-                                  height: 30,
-                                  colorFilter: const ColorFilter.mode(
-                                      Colors.white, BlendMode.srcIn),
-                                ),
-                              ),
-                            ),
-                            Expanded(
-                              child: Container(
-                                height: 50,
-                                decoration: const BoxDecoration(
-                                  color: Colors.black,
-                                  borderRadius:
-                                      BorderRadius.all(Radius.circular(10)),
-                                ),
-                                child: Row(
-                                  children: [
-                                    Expanded(
-                                        child: Container(
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 20),
-                                      child: const Text(
-                                        '',
-                                        style: TextStyle(
-                                            fontSize: 24, color: Colors.white),
-                                      ),
-                                    )),
-                                    // GestureDetector(
-                                    //   child: Padding(
-                                    //     padding: const EdgeInsets.symmetric(
-                                    //         horizontal: 10, vertical: 10),
-                                    //     child: SvgPicture.asset(
-                                    //       "assets/ic_info.svg",
-                                    //       width: 40,
-                                    //       height: 40,
-                                    //       colorFilter: const ColorFilter.mode(
-                                    //           Colors.white, BlendMode.srcIn),
-                                    //     ),
-                                    //   ),
-                                    //   onTap: () {},
-                                    // ),
-                                  ],
-                                ),
-                              ),
-                            )
-                          ],
-                        ),
-                        Container(
-                          height: 150,
-                          padding: const EdgeInsets.symmetric(horizontal: 10),
-                          child: Row(
-                            children: [
-                              Expanded(
-                                child: GridView(
-                                  physics: const BouncingScrollPhysics(),
-                                  scrollDirection: Axis.horizontal,
-                                  gridDelegate:
-                                      const SliverGridDelegateWithFixedCrossAxisCount(
-                                    crossAxisCount: 1,
-                                    mainAxisSpacing: 0.0,
-                                    crossAxisSpacing: 0.0,
-                                    childAspectRatio: 9 / 16,
-                                  ),
-                                  children: List<Widget>.generate(
-                                    ritems.length,
-                                    (int index) {
-                                      final int count = ritems.length;
-                                      final Animation<double> animation =
-                                          Tween<double>(begin: 0.0, end: 1.0)
-                                              .animate(
-                                        CurvedAnimation(
-                                          parent: animationController!,
-                                          curve: Interval(
-                                              (1 / count) * index, 1.0,
-                                              curve: Curves.fastOutSlowIn),
-                                        ),
-                                      );
-                                      animationController?.forward();
-                                      return HomeListView(
-                                        animation: animation,
-                                        animationController:
-                                            animationController,
-                                        listData: ritems[index],
-                                        callBack: () {
-                                          infos.clear();
-                                          String pathImg = "";
-                                          for (FileSystemEntity fileSystemEntity
-                                              in fileList) {
-                                            String a = ritems[index]['uid']
-                                                .toRadixString(16);
-                                            String uid = a.padLeft(8, '0');
-                                            if (fileSystemEntity.path
-                                                .contains(uid)) {
-                                              if (fileSystemEntity.path
-                                                      .endsWith("jpg") ||
-                                                  fileSystemEntity.path
-                                                      .endsWith("jpeg") ||
-                                                  fileSystemEntity.path
-                                                      .endsWith("png")) {
-                                                pathImg = fileSystemEntity.path;
-                                              }
-                                              if (fileSystemEntity.path
-                                                  .endsWith("info")) {
-                                                File i =
-                                                    File(fileSystemEntity.path);
-                                                i
-                                                    .readAsString()
-                                                    .then((String contents) {
-                                                  Map info =
-                                                      json.decode(contents) ??
-                                                          {};
-                                                  info['img'] = pathImg;
-                                                  print(info);
-                                                  setState(() {
-                                                    infos.add(info);
-                                                  });
-                                                });
-                                              }
-                                            }
-                                          }
-                                          setState(() {});
-                                        },
-                                      );
-                                    },
-                                  ),
-                                ),
-                              )
-                            ],
-                          ),
-                        ),
-                        Container(
-                          height: 5,
-                          color: Colors.white,
-                        ),
-                        Expanded(
-                          child: Container(
-                            padding: const EdgeInsets.all(5),
-                            child: GridView(
-                              physics: const BouncingScrollPhysics(),
-                              scrollDirection: Axis.vertical,
-                              gridDelegate:
-                                  const SliverGridDelegateWithMaxCrossAxisExtent(
-                                mainAxisSpacing: 0.0,
-                                crossAxisSpacing: 0.0,
-                                childAspectRatio: 21 / 9,
-                                maxCrossAxisExtent: 540,
-                              ),
-                              children: List<Widget>.generate(
-                                infos.length,
-                                (int index) {
-                                  final int count = infos.length;
-                                  final Animation<double> animation =
-                                      Tween<double>(begin: 0.0, end: 1.0)
-                                          .animate(
-                                    CurvedAnimation(
-                                      parent: animationController!,
-                                      curve: Interval((1 / count) * index, 1.0,
-                                          curve: Curves.fastOutSlowIn),
-                                    ),
-                                  );
-                                  animationController?.forward();
-                                  return VcrListView(
-                                    animation: animation,
-                                    animationController: animationController,
-                                    listData: infos[index],
-                                    callBack: () {
-                                      for (FileSystemEntity fileSystemEntity
-                                          in fileList) {
-                                        String a = ritems[index]['uid']
-                                            .toRadixString(16);
-                                        String uid = a.padLeft(8, '0');
-                                        if (fileSystemEntity.path
-                                                .endsWith("mp4") &&
-                                            fileSystemEntity.path
-                                                .contains(uid)) {
-                                          showDialog<dynamic>(
-                                            context: context!,
-                                            builder: (BuildContext context) =>
-                                                VideoPopupView(
-                                                    url:
-                                                        // 'rtsp://admin:Admin123@172.17.33.24:80/ch0_0.264',
-                                                        // 'assets/video/test.mp4',
-                                                        fileSystemEntity.path),
-                                          );
-                                        }
-                                      }
-                                    },
-                                  );
-                                },
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
+                Container(
+                  color: Colors.white70,
+                  child: CustomCalendarView(
+                    minimumDate: minimumDate,
+                    maximumDate: maximumDate,
+                    initialEndDate: initialEndDate,
+                    initialStartDate: initialStartDate,
+                    startEndDateChange:
+                        (DateTime startDateData, DateTime endDateData) {
+                      setState(() {
+                        startDate = startDateData;
+                        endDate = endDateData;
+                      });
+                    },
                   ),
-                  Container(
-                    width: w * 0.25,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Container(
-                          color: Colors.white70,
-                          child: CustomCalendarView(
-                            minimumDate: minimumDate,
-                            maximumDate: maximumDate,
-                            initialEndDate: initialEndDate,
-                            initialStartDate: initialStartDate,
-                            startEndDateChange:
-                                (DateTime startDateData, DateTime endDateData) {
-                              setState(() {
-                                startDate = startDateData;
-                                endDate = endDateData;
-                              });
-                            },
-                          ),
-                        ),
-                        Expanded(
-                          child: Container(
-                            color: Colors.white70,
-                            alignment: Alignment.center,
-                            padding: const EdgeInsets.symmetric(vertical: 20),
-                            child: const Column(children: [
-                              Text(
-                                "vcr info",
-                                style: TextStyle(
-                                    color: Colors.black87,
-                                    fontSize: 28,
-                                    fontWeight: FontWeight.bold),
-                              ),
-                            ]),
-                          ),
-                        )
-                      ],
-                    ),
+                ),
+                Expanded(
+                  child: Container(
+                    color: Colors.white70,
+                    alignment: Alignment.center,
+                    padding: const EdgeInsets.symmetric(vertical: 20),
+                    child: const Column(children: [
+                      Text(
+                        "vcr info",
+                        style: TextStyle(
+                            color: Colors.black87,
+                            fontSize: 28,
+                            fontWeight: FontWeight.bold),
+                      ),
+                    ]),
                   ),
-                ]),
-              )
-            ],
-          )),
+                )
+              ],
+            ),
+          ),
+        ]),
+      ),
     );
   }
 
@@ -505,7 +421,7 @@ class HomeListView extends StatelessWidget {
   Widget btns(BuildContext bct, dynamic? listData) {
     return NeumorphicButton(
       padding: EdgeInsets.zero,
-      margin: const EdgeInsets.all(10),
+      margin: const EdgeInsets.all(16),
       style: NeumorphicStyle(
           boxShape: NeumorphicBoxShape.roundRect(
             BorderRadius.circular(12),
@@ -513,27 +429,71 @@ class HomeListView extends StatelessWidget {
           color: Colors.white70,
           shape: NeumorphicShape.flat,
           shadowLightColor: Colors.transparent),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          SvgPicture.asset(
-            "assets/ic_room.svg",
-            width: 60,
-            height: 60,
-            colorFilter: const ColorFilter.mode(
-                Color.fromARGB(255, 202, 97, 4), BlendMode.srcIn),
+      child: AspectRatio(
+        aspectRatio: 16 / 9,
+        child: Container(
+          decoration: BoxDecoration(
+            image: listData['pre'] == null
+                ? const DecorationImage(
+                    image: AssetImage('assets/bg_vcr.jpg'), fit: BoxFit.fill)
+                : DecorationImage(
+                    image: FileImage(File(listData['pre'])), fit: BoxFit.fill),
           ),
-          Container(
-            margin: const EdgeInsets.only(left: 10, right: 10),
-            child: Text(
-              listData['loc'] ?? "",
-              style: const TextStyle(
-                fontWeight: FontWeight.w600,
-                fontSize: 28,
-              ),
-            ),
-          )
-        ],
+          child: Align(
+            alignment: Alignment.bottomCenter,
+            child: Container(
+                height: 36,
+                padding:
+                    const EdgeInsets.symmetric(vertical: 8, horizontal: 10),
+                color: Colors.black.withOpacity(0.3),
+                alignment: Alignment.center,
+                child: Row(
+                  children: [
+                    Container(
+                      width: 50,
+                      alignment: Alignment.center,
+                      decoration: BoxDecoration(
+                          border: Border.all(color: Colors.white),
+                          borderRadius:
+                              const BorderRadius.all(Radius.circular(12))),
+                      child: const Text(
+                        "L1",
+                        style: TextStyle(
+                            fontSize: 16, color: Colors.white, height: 1),
+                      ),
+                    ),
+                    Expanded(
+                      child: Container(
+                        margin: const EdgeInsets.symmetric(horizontal: 10),
+                        alignment: Alignment.center,
+                        decoration: BoxDecoration(
+                            border: Border.all(color: Colors.white),
+                            borderRadius:
+                                const BorderRadius.all(Radius.circular(12))),
+                        child: Text(
+                          listData['loc'],
+                          style: const TextStyle(
+                              fontSize: 16, color: Colors.white, height: 1),
+                        ),
+                      ),
+                    ),
+                    Container(
+                      width: 80,
+                      alignment: Alignment.center,
+                      decoration: BoxDecoration(
+                          border: Border.all(color: Colors.white),
+                          borderRadius:
+                              const BorderRadius.all(Radius.circular(12))),
+                      child: const Text(
+                        "Cam01",
+                        style: TextStyle(
+                            fontSize: 16, color: Colors.white, height: 1),
+                      ),
+                    ),
+                  ],
+                )),
+          ),
+        ),
       ),
       onPressed: () {
         callBack?.call();

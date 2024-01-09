@@ -91,7 +91,7 @@ class _MyCameraPageState extends State<MyCameraPage>
           children: [
             Expanded(
               child: Container(
-                margin: const EdgeInsets.all(10),
+                padding: const EdgeInsets.all(10),
                 child: ClipRRect(
                   borderRadius: const BorderRadius.all(Radius.circular(16)),
                   child: Container(
@@ -472,8 +472,8 @@ class HomeListView extends StatelessWidget {
         child: Align(
           alignment: Alignment.bottomCenter,
           child: Container(
-              height: 32,
-              padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 10),
+              height: 36,
+              padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 10),
               color: Colors.black.withOpacity(0.3),
               alignment: Alignment.center,
               child: Row(
@@ -482,12 +482,14 @@ class HomeListView extends StatelessWidget {
                     width: 50,
                     alignment: Alignment.center,
                     decoration: BoxDecoration(
+                        color: Color(0xff2d2d2f),
                         border: Border.all(color: Colors.white),
                         borderRadius:
                             const BorderRadius.all(Radius.circular(12))),
                     child: const Text(
                       "L1",
-                      style: TextStyle(fontSize: 16, color: Colors.white),
+                      style: TextStyle(
+                          fontSize: 16, color: Colors.white, height: 1),
                     ),
                   ),
                   Expanded(
@@ -495,13 +497,14 @@ class HomeListView extends StatelessWidget {
                       margin: const EdgeInsets.symmetric(horizontal: 10),
                       alignment: Alignment.center,
                       decoration: BoxDecoration(
+                          color: Color(0xff2d2d2f),
                           border: Border.all(color: Colors.white),
                           borderRadius:
                               const BorderRadius.all(Radius.circular(12))),
                       child: Text(
                         listData['loc'],
-                        style:
-                            const TextStyle(fontSize: 16, color: Colors.white),
+                        style: const TextStyle(
+                            fontSize: 16, color: Colors.white, height: 1),
                       ),
                     ),
                   ),
@@ -509,12 +512,14 @@ class HomeListView extends StatelessWidget {
                     width: 80,
                     alignment: Alignment.center,
                     decoration: BoxDecoration(
+                        color: Color(0xff2d2d2f),
                         border: Border.all(color: Colors.white),
                         borderRadius:
                             const BorderRadius.all(Radius.circular(12))),
                     child: const Text(
                       "Cam01",
-                      style: TextStyle(fontSize: 16, color: Colors.white),
+                      style: TextStyle(
+                          fontSize: 16, color: Colors.white, height: 1),
                     ),
                   ),
                 ],
