@@ -98,61 +98,54 @@ class _MyCameraPageState extends State<MyCameraPage>
                     color: Colors.black,
                     child: Column(
                       children: [
-                        GestureDetector(
-                          onTap: () {
-                            Navigator.of(context).pop();
-                          },
-                          child: Align(
-                            alignment: Alignment.centerLeft,
-                            child: Container(
-                              width: 60,
-                              height: 80,
-                              color: Colors.transparent,
-                              alignment: Alignment.center,
-                              padding: const EdgeInsets.only(bottom: 10),
-                              child: SvgPicture.asset(
-                                "assets/ic_return.svg",
-                                width: 30,
-                                height: 30,
-                                colorFilter: const ColorFilter.mode(
-                                    Colors.white, BlendMode.srcIn),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            GestureDetector(
+                              onTap: () {
+                                Navigator.of(context).pop();
+                              },
+                              child: Align(
+                                alignment: Alignment.centerLeft,
+                                child: Container(
+                                  width: 60,
+                                  height: 80,
+                                  color: Colors.transparent,
+                                  alignment: Alignment.center,
+                                  padding: const EdgeInsets.only(bottom: 10),
+                                  child: SvgPicture.asset(
+                                    "assets/ic_return.svg",
+                                    width: 30,
+                                    height: 30,
+                                    colorFilter: const ColorFilter.mode(
+                                        Colors.white, BlendMode.srcIn),
+                                  ),
+                                ),
                               ),
                             ),
-                          ),
+                            const Text(
+                              "Live    ",
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                  height: 1,
+                                  fontSize: 40,
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.w400),
+                            ),
+                          ],
                         ),
                         AspectRatio(
                           aspectRatio: 16 / 9,
-                          child: Stack(
-                            children: [
-                              Container(
-                                alignment: Alignment.center,
-                                decoration: const BoxDecoration(
-                                  color: Colors.black,
-                                  image: DecorationImage(
-                                      image: AssetImage('assets/bg_vcr.jpg'),
-                                      fit: BoxFit.fill),
-                                ),
-                                child: VideoPlayer(controller),
-                              ),
-                              Container(
-                                margin: const EdgeInsets.all(10),
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 36, vertical: 8),
-                                decoration: BoxDecoration(
-                                    color: Colors.black.withOpacity(0.3),
-                                    borderRadius: const BorderRadius.all(
-                                        Radius.circular(10))),
-                                child: const Text(
-                                  "Live",
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(
-                                      height: 1,
-                                      fontSize: 48,
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.w400),
-                                ),
-                              )
-                            ],
+                          child: Container(
+                            alignment: Alignment.center,
+                            decoration: const BoxDecoration(
+                              color: Colors.black,
+                              image: DecorationImage(
+                                  image: AssetImage('assets/bg_vcr.jpg'),
+                                  fit: BoxFit.fill),
+                            ),
+                            child: VideoPlayer(controller),
                           ),
                         ),
                         Expanded(
