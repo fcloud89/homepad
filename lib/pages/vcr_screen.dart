@@ -113,8 +113,11 @@ class _MyVcrPageState extends State<MyVcrPage> with TickerProviderStateMixin {
             child: Column(
               children: [
                 Container(
-                  height: 200,
+                  height: 220,
+                  color: Colors.transparent,
+                  alignment: Alignment.center,
                   child: Stack(
+                    alignment: Alignment.topCenter,
                     children: [
                       ListView(
                         padding: EdgeInsets.only(left: 80),
@@ -172,7 +175,21 @@ class _MyVcrPageState extends State<MyVcrPage> with TickerProviderStateMixin {
                           },
                         ),
                       ),
-                      Image.asset('assets/bg_vcr_head.jpg'),
+                      IgnorePointer(
+                        child: Image.asset(
+                          'assets/bg_vcr_head.jpg',
+                          width: w,
+                          fit: BoxFit.fill,
+                        ),
+                      ),
+                      Align(
+                        alignment: Alignment.bottomCenter,
+                        child: Image.asset(
+                          'assets/bg_vcr_divide.jpg',
+                          width: w,
+                          fit: BoxFit.fill,
+                        ),
+                      ),
                       GestureDetector(
                         onTap: () {
                           Navigator.of(context).pop();
@@ -200,16 +217,16 @@ class _MyVcrPageState extends State<MyVcrPage> with TickerProviderStateMixin {
                 ),
                 Expanded(
                   child: Container(
-                    padding: const EdgeInsets.all(5),
+                    padding: const EdgeInsets.all(10),
                     child: GridView(
                       physics: const BouncingScrollPhysics(),
                       scrollDirection: Axis.vertical,
                       gridDelegate:
-                          const SliverGridDelegateWithMaxCrossAxisExtent(
+                          const SliverGridDelegateWithFixedCrossAxisCount(
                         mainAxisSpacing: 0.0,
                         crossAxisSpacing: 0.0,
-                        childAspectRatio: 21 / 9,
-                        maxCrossAxisExtent: 540,
+                        childAspectRatio: 40 / 9,
+                        crossAxisCount: 2,
                       ),
                       children: List<Widget>.generate(
                         infos.length,
@@ -298,7 +315,7 @@ class _MyVcrPageState extends State<MyVcrPage> with TickerProviderStateMixin {
                   ],
                 ),
                 Container(
-                  color: Colors.white70,
+                  color: Colors.white,
                   child: CustomCalendarView(
                     minimumDate: minimumDate,
                     maximumDate: maximumDate,
@@ -315,7 +332,7 @@ class _MyVcrPageState extends State<MyVcrPage> with TickerProviderStateMixin {
                 ),
                 Expanded(
                   child: Container(
-                    color: Colors.white70,
+                    color: Colors.black,
                     alignment: Alignment.center,
                     padding: const EdgeInsets.symmetric(vertical: 20),
                     child: const Column(children: [
@@ -421,7 +438,7 @@ class HomeListView extends StatelessWidget {
   Widget btns(BuildContext bct, dynamic? listData) {
     return NeumorphicButton(
       padding: EdgeInsets.zero,
-      margin: const EdgeInsets.all(16),
+      margin: const EdgeInsets.only(left: 16, top: 16, right: 16, bottom: 28),
       style: NeumorphicStyle(
           boxShape: NeumorphicBoxShape.roundRect(
             BorderRadius.circular(12),
@@ -435,7 +452,7 @@ class HomeListView extends StatelessWidget {
           decoration: BoxDecoration(
             image: listData['pre'] == null
                 ? const DecorationImage(
-                    image: AssetImage('assets/bg_vcr.jpg'), fit: BoxFit.fill)
+                    image: AssetImage('assets/bg.jpg'), fit: BoxFit.fill)
                 : DecorationImage(
                     image: FileImage(File(listData['pre'])), fit: BoxFit.fill),
           ),
@@ -453,6 +470,7 @@ class HomeListView extends StatelessWidget {
                       width: 50,
                       alignment: Alignment.center,
                       decoration: BoxDecoration(
+                          color: Color(0xff2d2d2f),
                           border: Border.all(color: Colors.white),
                           borderRadius:
                               const BorderRadius.all(Radius.circular(12))),
@@ -467,6 +485,7 @@ class HomeListView extends StatelessWidget {
                         margin: const EdgeInsets.symmetric(horizontal: 10),
                         alignment: Alignment.center,
                         decoration: BoxDecoration(
+                            color: Color(0xff2d2d2f),
                             border: Border.all(color: Colors.white),
                             borderRadius:
                                 const BorderRadius.all(Radius.circular(12))),
@@ -481,6 +500,7 @@ class HomeListView extends StatelessWidget {
                       width: 80,
                       alignment: Alignment.center,
                       decoration: BoxDecoration(
+                          color: Color(0xff2d2d2f),
                           border: Border.all(color: Colors.white),
                           borderRadius:
                               const BorderRadius.all(Radius.circular(12))),
@@ -537,56 +557,81 @@ class VcrListView extends StatelessWidget {
     return NeumorphicButton(
       padding: EdgeInsets.zero,
       margin: const EdgeInsets.all(10),
-      style: const NeumorphicStyle(
-          color: Colors.transparent,
-          shape: NeumorphicShape.flat,
-          shadowLightColor: Colors.transparent),
-      child: ClipRect(
-        child: BackdropFilter(
-          filter: ImageFilter.blur(sigmaX: 10.0, sigmaY: 10.0),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              AspectRatio(
-                aspectRatio: 16 / 9,
-                child: listData['img'] == null
-                    ? Container(
-                        alignment: Alignment.center,
-                        decoration: const BoxDecoration(
-                          image: DecorationImage(
-                              image: AssetImage('assets/bg_vcr.jpg'),
-                              fit: BoxFit.cover),
-                        ),
-                        child: const Text(
-                          "No Preview",
-                          style: TextStyle(color: Colors.white, fontSize: 32),
-                        ),
-                      )
-                    : Image.file(
-                        File(listData['img']),
-                        fit: BoxFit.cover,
+      style: NeumorphicStyle(
+        color: Colors.transparent,
+        shape: NeumorphicShape.flat,
+        shadowLightColor: Colors.transparent,
+        boxShape: NeumorphicBoxShape.roundRect(
+            const BorderRadius.all(Radius.circular(16))),
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Expanded(
+            flex: 2,
+            child: AspectRatio(
+              aspectRatio: 16 / 9,
+              child: listData['img'] == null
+                  ? Container(
+                      alignment: Alignment.center,
+                      decoration: const BoxDecoration(
+                        image: DecorationImage(
+                            image: AssetImage('assets/bg_vcr.jpg'),
+                            fit: BoxFit.cover),
                       ),
+                      child: const Text(
+                        "No Preview",
+                        style: TextStyle(color: Colors.white, fontSize: 32),
+                      ),
+                    )
+                  : Image.file(
+                      File(listData['img']),
+                      fit: BoxFit.cover,
+                    ),
+            ),
+          ),
+          Expanded(
+            flex: 3,
+            child: Container(
+              alignment: Alignment.centerLeft,
+              decoration: BoxDecoration(
+                color: Colors.black,
               ),
-              Expanded(
-                child: Container(
-                  alignment: Alignment.center,
-                  decoration: BoxDecoration(
-                    color: Colors.grey.shade200.withOpacity(0.3),
-                  ),
-                  padding: const EdgeInsets.only(left: 10, right: 10),
-                  child: Text(
-                    '${listData['uid']}',
+              padding: const EdgeInsets.symmetric(horizontal: 12),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'L1·Backyard·Cam1',
                     style: const TextStyle(
                       color: Colors.white,
-                      fontWeight: FontWeight.w600,
-                      fontSize: 28,
+                      height: 1,
+                      fontSize: 36,
                     ),
                   ),
-                ),
+                  SizedBox(
+                    height: 24,
+                  ),
+                  Text(
+                    '18:34 5min',
+                    style: TextStyle(
+                      color: Colors.white.withOpacity(0.7),
+                      fontSize: 24,
+                    ),
+                  ),
+                  Text(
+                    'Human·Vehcle',
+                    style: TextStyle(
+                      color: Colors.white.withOpacity(0.7),
+                      fontSize: 24,
+                    ),
+                  ),
+                ],
               ),
-            ],
+            ),
           ),
-        ),
+        ],
       ),
       onPressed: () {
         callBack?.call();
