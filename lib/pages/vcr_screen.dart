@@ -16,6 +16,8 @@ import 'package:homepad/widgets/WLine.dart';
 import 'package:homepad/widgets/WPopupWindow.dart';
 import 'package:homepad/widgets/back_button.dart';
 import 'package:homepad/widgets/custom_calendar.dart';
+import 'package:homepad/widgets/fwidget/fRoundCheckBox.dart';
+import 'package:homepad/widgets/fwidget/fradio.dart';
 import 'package:homepad/widgets/video_popup_view.dart';
 
 class MyVcrPage extends StatefulWidget {
@@ -113,14 +115,14 @@ class _MyVcrPageState extends State<MyVcrPage> with TickerProviderStateMixin {
             child: Column(
               children: [
                 Container(
-                  height: 220,
+                  height: 210,
                   color: Colors.transparent,
                   alignment: Alignment.center,
                   child: Stack(
                     alignment: Alignment.topCenter,
                     children: [
                       ListView(
-                        padding: EdgeInsets.only(left: 80),
+                        padding: const EdgeInsets.only(left: 80),
                         physics: const BouncingScrollPhysics(),
                         scrollDirection: Axis.horizontal,
                         children: List<Widget>.generate(
@@ -176,12 +178,12 @@ class _MyVcrPageState extends State<MyVcrPage> with TickerProviderStateMixin {
                         ),
                       ),
                       IgnorePointer(
-                        child: Image.asset(
-                          'assets/bg_vcr_head.jpg',
-                          width: w,
-                          fit: BoxFit.fill,
-                        ),
-                      ),
+                          child: Container(
+                        decoration: const BoxDecoration(
+                            image: DecorationImage(
+                                image: AssetImage('assets/bg_vcr_head.jpg'),
+                                fit: BoxFit.fill)),
+                      )),
                       Align(
                         alignment: Alignment.bottomCenter,
                         child: Image.asset(
@@ -217,15 +219,16 @@ class _MyVcrPageState extends State<MyVcrPage> with TickerProviderStateMixin {
                 ),
                 Expanded(
                   child: Container(
-                    padding: const EdgeInsets.all(10),
+                    padding: const EdgeInsets.only(
+                        left: 18, right: 18, top: 12, bottom: 12),
                     child: GridView(
                       physics: const BouncingScrollPhysics(),
                       scrollDirection: Axis.vertical,
                       gridDelegate:
                           const SliverGridDelegateWithFixedCrossAxisCount(
-                        mainAxisSpacing: 0.0,
-                        crossAxisSpacing: 0.0,
-                        childAspectRatio: 40 / 9,
+                        mainAxisSpacing: 18,
+                        crossAxisSpacing: 18,
+                        childAspectRatio: 4,
                         crossAxisCount: 2,
                       ),
                       children: List<Widget>.generate(
@@ -253,15 +256,17 @@ class _MyVcrPageState extends State<MyVcrPage> with TickerProviderStateMixin {
                                 String uid = a.padLeft(8, '0');
                                 if (fileSystemEntity.path.endsWith("mp4") &&
                                     fileSystemEntity.path.contains(uid)) {
-                                  showDialog<dynamic>(
-                                    context: context!,
-                                    builder: (BuildContext context) =>
-                                        VideoPopupView(
-                                            url:
-                                                // 'rtsp://admin:Admin123@172.17.33.24:80/ch0_0.264',
-                                                // 'assets/video/test.mp4',
-                                                fileSystemEntity.path),
-                                  );
+                                  print(
+                                      "${ritems}  ${index}  ${uid}  ${fileSystemEntity.path}");
+                                  // showDialog<dynamic>(
+                                  //   context: context!,
+                                  //   builder: (BuildContext context) =>
+                                  //       VideoPopupView(
+                                  //           url:
+                                  //               // 'rtsp://admin:Admin123@172.17.33.24:80/ch0_0.264',
+                                  //               // 'assets/video/test.mp4',
+                                  //               fileSystemEntity.path),
+                                  // );
                                 }
                               }
                             },
@@ -275,12 +280,12 @@ class _MyVcrPageState extends State<MyVcrPage> with TickerProviderStateMixin {
             ),
           ),
           Container(
-            width: w * 0.18,
+            width: w * 0.25,
             color: Colors.black,
             child: Column(
               children: [
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
+                Stack(
+                  alignment: Alignment.center,
                   children: [
                     const Expanded(
                       child: Text(
@@ -289,29 +294,37 @@ class _MyVcrPageState extends State<MyVcrPage> with TickerProviderStateMixin {
                         style: TextStyle(color: Colors.white, fontSize: 20),
                       ),
                     ),
-                    Container(
-                      width: 50,
-                      height: 60,
-                      alignment: Alignment.center,
-                      child: SvgPicture.asset(
-                        "assets/ic_signal_f.svg",
-                        width: 40,
-                        height: 40,
-                        colorFilter: const ColorFilter.mode(
-                            Colors.white, BlendMode.srcIn),
-                      ),
-                    ),
-                    Container(
-                      width: 80,
-                      alignment: Alignment.center,
-                      child: SvgPicture.asset(
-                        "assets/ic_battery.svg",
+                    Align(
+                      alignment: Alignment.centerRight,
+                      child: Container(
                         width: 50,
-                        height: 50,
-                        colorFilter: const ColorFilter.mode(
-                            Colors.white, BlendMode.srcIn),
+                        height: 60,
+                        margin: EdgeInsets.only(right: 80),
+                        alignment: Alignment.centerRight,
+                        child: SvgPicture.asset(
+                          "assets/ic_signal_f.svg",
+                          width: 40,
+                          height: 40,
+                          colorFilter: const ColorFilter.mode(
+                              Colors.white, BlendMode.srcIn),
+                        ),
                       ),
                     ),
+                    Align(
+                      alignment: Alignment.centerRight,
+                      child: Container(
+                        width: 80,
+                        margin: EdgeInsets.only(right: 10),
+                        alignment: Alignment.centerRight,
+                        child: SvgPicture.asset(
+                          "assets/ic_battery.svg",
+                          width: 50,
+                          height: 50,
+                          colorFilter: const ColorFilter.mode(
+                              Colors.white, BlendMode.srcIn),
+                        ),
+                      ),
+                    )
                   ],
                 ),
                 Container(
@@ -330,6 +343,13 @@ class _MyVcrPageState extends State<MyVcrPage> with TickerProviderStateMixin {
                     },
                   ),
                 ),
+                Container(
+                  height: 6,
+                  margin: const EdgeInsets.only(left: 15, right: 15, top: 8),
+                  decoration: const BoxDecoration(
+                      color: Color(0xff2d2d2f),
+                      borderRadius: BorderRadius.all(Radius.circular(3))),
+                ),
                 Expanded(
                   child: Container(
                     color: Colors.black,
@@ -345,52 +365,41 @@ class _MyVcrPageState extends State<MyVcrPage> with TickerProviderStateMixin {
                       ),
                     ]),
                   ),
-                )
+                ),
+                Container(
+                  height: 6,
+                  margin: const EdgeInsets.only(left: 15, right: 15, top: 8),
+                  decoration: const BoxDecoration(
+                      color: Color(0xff2d2d2f),
+                      borderRadius: BorderRadius.all(Radius.circular(3))),
+                ),
+                Container(
+                  height: 160,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Container(
+                        height: 120,
+                        width: 120,
+                        child: Image.asset('assets/ic_man.png'),
+                      ),
+                      Container(
+                        height: 90,
+                        width: 120,
+                        child: Image.asset('assets/ic_dog.png'),
+                      ),
+                      Container(
+                        height: 90,
+                        width: 140,
+                        child: Image.asset('assets/ic_car.png'),
+                      ),
+                    ],
+                  ),
+                ),
               ],
             ),
           ),
         ]),
-      ),
-    );
-  }
-
-  Widget getCameraListWidget(list) {
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(12),
-      child: Scrollbar(
-        child: ListView.builder(
-          padding: EdgeInsets.zero,
-          itemBuilder: (BuildContext context, int index) {
-            return Stack(
-              children: [
-                Material(
-                  child: Ink(
-                    child: InkWell(
-                      onTap: () async {
-                        BotToast.removeAll(BotToast.attachedKey);
-                        setState(() {});
-                      },
-                      child: Container(
-                        alignment: Alignment.center,
-                        height: 60.px,
-                        child: Text(
-                          list[index],
-                          style: TextStyle(
-                              fontSize: 20.px, color: const Color(0xff333333)),
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-                WLine(
-                  marginLeft: 20.px,
-                  marginRight: 20.px,
-                ),
-              ],
-            );
-          },
-          itemCount: list.length,
-        ),
       ),
     );
   }
@@ -417,6 +426,7 @@ class HomeListView extends StatelessWidget {
   final VoidCallback? callBack;
   final AnimationController? animationController;
   final Animation<double>? animation;
+  final bool checked = false;
 
   @override
   Widget build(BuildContext context) {
@@ -438,7 +448,7 @@ class HomeListView extends StatelessWidget {
   Widget btns(BuildContext bct, dynamic? listData) {
     return NeumorphicButton(
       padding: EdgeInsets.zero,
-      margin: const EdgeInsets.only(left: 16, top: 16, right: 16, bottom: 28),
+      margin: const EdgeInsets.only(left: 12, top: 16, right: 12, bottom: 20),
       style: NeumorphicStyle(
           boxShape: NeumorphicBoxShape.roundRect(
             BorderRadius.circular(12),
@@ -456,62 +466,82 @@ class HomeListView extends StatelessWidget {
                 : DecorationImage(
                     image: FileImage(File(listData['pre'])), fit: BoxFit.fill),
           ),
-          child: Align(
-            alignment: Alignment.bottomCenter,
-            child: Container(
-                height: 36,
-                padding:
-                    const EdgeInsets.symmetric(vertical: 8, horizontal: 10),
-                color: Colors.black.withOpacity(0.3),
-                alignment: Alignment.center,
-                child: Row(
-                  children: [
-                    Container(
-                      width: 50,
-                      alignment: Alignment.center,
-                      decoration: BoxDecoration(
-                          color: Color(0xff2d2d2f),
-                          border: Border.all(color: Colors.white),
-                          borderRadius:
-                              const BorderRadius.all(Radius.circular(12))),
-                      child: const Text(
-                        "L1",
-                        style: TextStyle(
-                            fontSize: 16, color: Colors.white, height: 1),
-                      ),
-                    ),
-                    Expanded(
-                      child: Container(
-                        margin: const EdgeInsets.symmetric(horizontal: 10),
+          child: Stack(
+            children: [
+              Align(
+                alignment: Alignment.bottomCenter,
+                child: Container(
+                  height: 36,
+                  padding:
+                      const EdgeInsets.symmetric(vertical: 8, horizontal: 10),
+                  color: Colors.black.withOpacity(0.3),
+                  alignment: Alignment.center,
+                  child: Row(
+                    children: [
+                      Container(
+                        width: 50,
                         alignment: Alignment.center,
                         decoration: BoxDecoration(
-                            color: Color(0xff2d2d2f),
+                            color: const Color(0xff2d2d2f),
                             border: Border.all(color: Colors.white),
                             borderRadius:
                                 const BorderRadius.all(Radius.circular(12))),
-                        child: Text(
-                          listData['loc'],
-                          style: const TextStyle(
+                        child: const Text(
+                          "L1",
+                          style: TextStyle(
                               fontSize: 16, color: Colors.white, height: 1),
                         ),
                       ),
-                    ),
-                    Container(
-                      width: 80,
-                      alignment: Alignment.center,
-                      decoration: BoxDecoration(
-                          color: Color(0xff2d2d2f),
-                          border: Border.all(color: Colors.white),
-                          borderRadius:
-                              const BorderRadius.all(Radius.circular(12))),
-                      child: const Text(
-                        "Cam01",
-                        style: TextStyle(
-                            fontSize: 16, color: Colors.white, height: 1),
+                      Expanded(
+                        child: Container(
+                          margin: const EdgeInsets.symmetric(horizontal: 10),
+                          alignment: Alignment.center,
+                          decoration: BoxDecoration(
+                              color: const Color(0xff2d2d2f),
+                              border: Border.all(color: Colors.white),
+                              borderRadius:
+                                  const BorderRadius.all(Radius.circular(12))),
+                          child: Text(
+                            listData['loc'],
+                            style: const TextStyle(
+                                fontSize: 16, color: Colors.white, height: 1),
+                          ),
+                        ),
                       ),
-                    ),
-                  ],
-                )),
+                      Container(
+                        width: 80,
+                        alignment: Alignment.center,
+                        decoration: BoxDecoration(
+                            color: const Color(0xff2d2d2f),
+                            border: Border.all(color: Colors.white),
+                            borderRadius:
+                                const BorderRadius.all(Radius.circular(12))),
+                        child: const Text(
+                          "Cam01",
+                          style: TextStyle(
+                              fontSize: 16, color: Colors.white, height: 1),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              Align(
+                alignment: Alignment.topRight,
+                child: Container(
+                  width: 50,
+                  height: 50,
+                  color: Colors.transparent,
+                  padding: EdgeInsets.all(10),
+                  child: fRoundCheckBox(
+                    checkedColor: Color(0xffeb4e3d),
+                    uncheckedColor: Colors.transparent,
+                    border: Border.all(color: Colors.white, width: 2),
+                    onTap: (check) {},
+                  ),
+                ),
+              ),
+            ],
           ),
         ),
       ),
@@ -556,7 +586,6 @@ class VcrListView extends StatelessWidget {
   Widget btns(BuildContext bct) {
     return NeumorphicButton(
       padding: EdgeInsets.zero,
-      margin: const EdgeInsets.all(10),
       style: NeumorphicStyle(
         color: Colors.transparent,
         shape: NeumorphicShape.flat,
@@ -568,7 +597,7 @@ class VcrListView extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Expanded(
-            flex: 2,
+            flex: 4,
             child: AspectRatio(
               aspectRatio: 16 / 9,
               child: listData['img'] == null
@@ -591,10 +620,10 @@ class VcrListView extends StatelessWidget {
             ),
           ),
           Expanded(
-            flex: 3,
+            flex: 5,
             child: Container(
               alignment: Alignment.centerLeft,
-              decoration: BoxDecoration(
+              decoration: const BoxDecoration(
                 color: Colors.black,
               ),
               padding: const EdgeInsets.symmetric(horizontal: 12),
@@ -602,15 +631,15 @@ class VcrListView extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    'L1·Backyard·Cam1',
-                    style: const TextStyle(
+                  const Text(
+                    'Backyard·Cam1',
+                    style: TextStyle(
                       color: Colors.white,
                       height: 1,
                       fontSize: 36,
                     ),
                   ),
-                  SizedBox(
+                  const SizedBox(
                     height: 24,
                   ),
                   Text(
