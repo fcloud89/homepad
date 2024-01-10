@@ -10,6 +10,7 @@ import 'package:homepad/pages/area_screen.dart';
 import 'package:homepad/pages/camera_screen.dart';
 import 'package:homepad/pages/scene_screen.dart';
 import 'package:homepad/pages/vcr_screen.dart';
+import 'package:homepad/utils/AppLocale.dart';
 import 'package:homepad/utils/Constant.dart';
 import 'package:homepad/utils/RouteHelper.dart';
 import 'package:homepad/utils/SizeUtils.dart';

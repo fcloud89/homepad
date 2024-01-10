@@ -2,21 +2,16 @@ import 'package:bot_toast/bot_toast.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_neumorphic_plus/flutter_neumorphic.dart';
 import 'package:homepad/pages/home_screen.dart';
+import 'package:homepad/utils/AppLocale.dart';
 import 'package:responsive_builder/responsive_builder.dart';
 import 'package:wakelock_plus/wakelock_plus.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
   WakelockPlus.enable();
-  runApp(const MyApp());
-}
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
+  runApp(
+    MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
@@ -29,20 +24,52 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       builder: BotToastInit(),
       navigatorObservers: [BotToastNavigatorObserver()],
-      home: ScreenTypeLayout(
-        mobile: OrientationLayoutBuilder(
-          portrait: (context) => Container(color: Colors.blueAccent),
-          landscape: (context) => const MyHomePage(),
-        ),
-        tablet: OrientationLayoutBuilder(
-          portrait: (context) => Container(color: Colors.green),
-          landscape: (context) => Container(color: Colors.pink),
-        ),
-        desktop: OrientationLayoutBuilder(
-          portrait: (context) => Container(color: Colors.deepPurpleAccent),
-          landscape: (context) => const MyHomePage(),
-        ),
+      home: MyApp(),
+    ),
+  );
+}
+
+class MyApp extends StatefulWidget {
+  @override
+  _MyAppState createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
+  @override
+  void initState() {
+    WidgetsBinding.instance.addObserver(this);
+
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return ScreenTypeLayout(
+      mobile: OrientationLayoutBuilder(
+        portrait: (context) => Container(color: Colors.blueAccent),
+        landscape: (context) => const MyHomePage(),
+      ),
+      tablet: OrientationLayoutBuilder(
+        portrait: (context) => Container(color: Colors.green),
+        landscape: (context) => Container(color: Colors.pink),
+      ),
+      desktop: OrientationLayoutBuilder(
+        portrait: (context) => Container(color: Colors.deepPurpleAccent),
+        landscape: (context) => const MyHomePage(),
       ),
     );
+  }
+
+  /// 生命周期发生变化时，会调用该方法
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    super.didChangeAppLifecycleState(state);
+    print('state = $state');
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
   }
 }

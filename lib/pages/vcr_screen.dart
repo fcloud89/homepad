@@ -19,6 +19,7 @@ import 'package:homepad/widgets/custom_calendar.dart';
 import 'package:homepad/widgets/fwidget/fRoundCheckBox.dart';
 import 'package:homepad/widgets/fwidget/fradio.dart';
 import 'package:homepad/widgets/video_popup_view.dart';
+import 'package:table_calendar/table_calendar.dart';
 
 class MyVcrPage extends StatefulWidget {
   @override
@@ -228,8 +229,8 @@ class _MyVcrPageState extends State<MyVcrPage> with TickerProviderStateMixin {
                           const SliverGridDelegateWithFixedCrossAxisCount(
                         mainAxisSpacing: 18,
                         crossAxisSpacing: 18,
-                        childAspectRatio: 4,
-                        crossAxisCount: 2,
+                        childAspectRatio: 8 / 7,
+                        crossAxisCount: 3,
                       ),
                       children: List<Widget>.generate(
                         infos.length,
@@ -299,7 +300,7 @@ class _MyVcrPageState extends State<MyVcrPage> with TickerProviderStateMixin {
                       child: Container(
                         width: 50,
                         height: 60,
-                        margin: EdgeInsets.only(right: 80),
+                        margin: const EdgeInsets.only(right: 80),
                         alignment: Alignment.centerRight,
                         child: SvgPicture.asset(
                           "assets/ic_signal_f.svg",
@@ -314,7 +315,7 @@ class _MyVcrPageState extends State<MyVcrPage> with TickerProviderStateMixin {
                       alignment: Alignment.centerRight,
                       child: Container(
                         width: 80,
-                        margin: EdgeInsets.only(right: 10),
+                        margin: const EdgeInsets.only(right: 10),
                         alignment: Alignment.centerRight,
                         child: SvgPicture.asset(
                           "assets/ic_battery.svg",
@@ -328,19 +329,41 @@ class _MyVcrPageState extends State<MyVcrPage> with TickerProviderStateMixin {
                   ],
                 ),
                 Container(
-                  color: Colors.white,
-                  child: CustomCalendarView(
-                    minimumDate: minimumDate,
-                    maximumDate: maximumDate,
-                    initialEndDate: initialEndDate,
-                    initialStartDate: initialStartDate,
-                    startEndDateChange:
-                        (DateTime startDateData, DateTime endDateData) {
-                      setState(() {
-                        startDate = startDateData;
-                        endDate = endDateData;
-                      });
-                    },
+                  color: Colors.black,
+                  height: w * 0.25,
+                  // child: CustomCalendarView(
+                  //   minimumDate: minimumDate,
+                  //   maximumDate: maximumDate,
+                  //   initialEndDate: initialEndDate,
+                  //   initialStartDate: initialStartDate,
+                  //   startEndDateChange:
+                  //       (DateTime startDateData, DateTime endDateData) {
+                  //     setState(() {
+                  //       startDate = startDateData;
+                  //       endDate = endDateData;
+                  //     });
+                  //   },
+                  // ),
+                  child: TableCalendar(
+                    shouldFillViewport: true,
+                    startingDayOfWeek: StartingDayOfWeek.monday,
+                    firstDay: DateTime.utc(2010, 10, 16),
+                    lastDay: DateTime.utc(2030, 3, 14),
+                    focusedDay: DateTime.now(),
+                    daysOfWeekHeight: 30,
+                    calendarStyle: const CalendarStyle(
+                      outsideDaysVisible: false,
+                      defaultTextStyle: TextStyle(
+                          color: Colors.white, fontSize: 24, height: 1),
+                      weekendTextStyle: TextStyle(
+                          color: Colors.white, fontSize: 24, height: 1),
+                    ),
+                    daysOfWeekStyle: DaysOfWeekStyle(
+                      weekdayStyle: TextStyle(
+                          color: Colors.white, fontSize: 24, height: 1),
+                      weekendStyle: TextStyle(
+                          color: Colors.white, fontSize: 24, height: 1),
+                    ),
                   ),
                 ),
                 Container(
@@ -379,7 +402,7 @@ class _MyVcrPageState extends State<MyVcrPage> with TickerProviderStateMixin {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Container(
-                        height: 120,
+                        height: 100,
                         width: 120,
                         child: Image.asset('assets/ic_man.png'),
                       ),
@@ -532,9 +555,9 @@ class HomeListView extends StatelessWidget {
                   width: 50,
                   height: 50,
                   color: Colors.transparent,
-                  padding: EdgeInsets.all(10),
+                  padding: const EdgeInsets.all(10),
                   child: fRoundCheckBox(
-                    checkedColor: Color(0xffeb4e3d),
+                    checkedColor: const Color(0xffeb4e3d),
                     uncheckedColor: Colors.transparent,
                     border: Border.all(color: Colors.white, width: 2),
                     onTap: (check) {},
@@ -593,11 +616,10 @@ class VcrListView extends StatelessWidget {
         boxShape: NeumorphicBoxShape.roundRect(
             const BorderRadius.all(Radius.circular(16))),
       ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
+      child: Column(
         children: [
           Expanded(
-            flex: 4,
+            flex: 9,
             child: AspectRatio(
               aspectRatio: 16 / 9,
               child: listData['img'] == null
@@ -626,21 +648,18 @@ class VcrListView extends StatelessWidget {
               decoration: const BoxDecoration(
                 color: Colors.black,
               ),
-              padding: const EdgeInsets.symmetric(horizontal: 12),
+              padding: const EdgeInsets.symmetric(horizontal: 20),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const Text(
-                    'Backyard·Cam1',
+                    'Backyard',
                     style: TextStyle(
                       color: Colors.white,
-                      height: 1,
-                      fontSize: 36,
+                      height: 1.6,
+                      fontSize: 32,
                     ),
-                  ),
-                  const SizedBox(
-                    height: 24,
                   ),
                   Text(
                     '18:34 5min',
@@ -652,9 +671,9 @@ class VcrListView extends StatelessWidget {
                   Text(
                     'Human·Vehcle',
                     style: TextStyle(
-                      color: Colors.white.withOpacity(0.7),
-                      fontSize: 24,
-                    ),
+                        color: Colors.white.withOpacity(0.7),
+                        fontSize: 24,
+                        height: 1.5),
                   ),
                 ],
               ),
