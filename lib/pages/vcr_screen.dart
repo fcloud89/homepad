@@ -42,6 +42,8 @@ class _MyVcrPageState extends State<MyVcrPage> with TickerProviderStateMixin {
   late StreamSubscription recordSS;
   late StreamSubscription aiSS;
   List<FileSystemEntity> fileList = [];
+  DateTime? _selectedDay;
+  DateTime? _focusedDay;
 
   @override
   void initState() {
@@ -331,39 +333,76 @@ class _MyVcrPageState extends State<MyVcrPage> with TickerProviderStateMixin {
                 Container(
                   color: Colors.black,
                   height: w * 0.25,
-                  // child: CustomCalendarView(
-                  //   minimumDate: minimumDate,
-                  //   maximumDate: maximumDate,
-                  //   initialEndDate: initialEndDate,
-                  //   initialStartDate: initialStartDate,
-                  //   startEndDateChange:
-                  //       (DateTime startDateData, DateTime endDateData) {
-                  //     setState(() {
-                  //       startDate = startDateData;
-                  //       endDate = endDateData;
-                  //     });
-                  //   },
-                  // ),
+                  padding: const EdgeInsets.symmetric(horizontal: 10),
                   child: TableCalendar(
                     shouldFillViewport: true,
                     startingDayOfWeek: StartingDayOfWeek.monday,
-                    firstDay: DateTime.utc(2010, 10, 16),
-                    lastDay: DateTime.utc(2030, 3, 14),
+                    firstDay: DateTime.utc(2020, 1, 1),
+                    lastDay: DateTime.utc(2030, 12, 31),
                     focusedDay: DateTime.now(),
                     daysOfWeekHeight: 30,
-                    calendarStyle: const CalendarStyle(
+                    calendarStyle: CalendarStyle(
                       outsideDaysVisible: false,
-                      defaultTextStyle: TextStyle(
+                      cellMargin: const EdgeInsets.all(10),
+                      defaultTextStyle: const TextStyle(
                           color: Colors.white, fontSize: 24, height: 1),
-                      weekendTextStyle: TextStyle(
+                      weekendTextStyle: const TextStyle(
                           color: Colors.white, fontSize: 24, height: 1),
+                      todayTextStyle: const TextStyle(
+                          color: Colors.white, fontSize: 24, height: 1),
+                      selectedTextStyle: const TextStyle(
+                          color: Colors.black, fontSize: 24, height: 1),
+                      defaultDecoration: BoxDecoration(
+                        border: Border.all(width: 3, color: Colors.white),
+                        shape: BoxShape.circle,
+                      ),
+                      weekendDecoration: BoxDecoration(
+                        border: Border.all(width: 3, color: Colors.white),
+                        shape: BoxShape.circle,
+                      ),
+                      selectedDecoration: const BoxDecoration(
+                        color: Colors.white,
+                        shape: BoxShape.circle,
+                      ),
                     ),
-                    daysOfWeekStyle: DaysOfWeekStyle(
+                    daysOfWeekStyle: const DaysOfWeekStyle(
                       weekdayStyle: TextStyle(
                           color: Colors.white, fontSize: 24, height: 1),
                       weekendStyle: TextStyle(
                           color: Colors.white, fontSize: 24, height: 1),
                     ),
+                    headerStyle: HeaderStyle(
+                      titleCentered: true,
+                      formatButtonVisible: false,
+                      formatButtonTextStyle: const TextStyle(
+                          color: Colors.white, fontSize: 30, height: 1),
+                      titleTextStyle: const TextStyle(
+                          color: Colors.white, fontSize: 30, height: 1),
+                      leftChevronIcon: SvgPicture.asset(
+                        "assets/ic_left.svg",
+                        width: 30,
+                        height: 30,
+                        colorFilter: const ColorFilter.mode(
+                            Colors.white, BlendMode.srcIn),
+                      ),
+                      rightChevronIcon: SvgPicture.asset(
+                        "assets/ic_right.svg",
+                        width: 30,
+                        height: 30,
+                        colorFilter: const ColorFilter.mode(
+                            Colors.white, BlendMode.srcIn),
+                      ),
+                    ),
+                    selectedDayPredicate: (day) {
+                      return isSameDay(_selectedDay, day);
+                    },
+                    onDaySelected: (selectedDay, focusedDay) {
+                      setState(() {
+                        _selectedDay = selectedDay;
+                        _focusedDay = focusedDay;
+                      });
+                    },
+                    onFormatChanged: (CalendarFormat) {},
                   ),
                 ),
                 Container(
@@ -375,29 +414,50 @@ class _MyVcrPageState extends State<MyVcrPage> with TickerProviderStateMixin {
                 ),
                 Expanded(
                   child: Container(
-                    color: Colors.black,
-                    alignment: Alignment.center,
-                    padding: const EdgeInsets.symmetric(vertical: 20),
-                    child: const Column(children: [
-                      Text(
-                        "vcr info",
-                        style: TextStyle(
-                            color: Colors.black87,
-                            fontSize: 28,
-                            fontWeight: FontWeight.bold),
-                      ),
-                    ]),
+                    alignment: Alignment.topLeft,
+                    margin:
+                        const EdgeInsets.symmetric(horizontal: 16, vertical: 5),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text(
+                          "Tags:",
+                          style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 28,
+                              fontWeight: FontWeight.bold),
+                        ),
+                        SizedBox(
+                          height: 10,
+                        ),
+                        Wrap(
+                          spacing: 10,
+                          runSpacing: 10,
+                          children: [
+                            getClips("entrance"),
+                            getClips("entrance"),
+                            getClips("entrance"),
+                            getClips("entrance"),
+                            getClips("entrance"),
+                            getClips("entrance"),
+                          ],
+                        ),
+                      ],
+                    ),
                   ),
                 ),
                 Container(
                   height: 6,
                   margin: const EdgeInsets.only(left: 15, right: 15, top: 8),
                   decoration: const BoxDecoration(
-                      color: Color(0xff2d2d2f),
-                      borderRadius: BorderRadius.all(Radius.circular(3))),
+                    color: Color(0xff2d2d2f),
+                    borderRadius: BorderRadius.all(
+                      Radius.circular(3),
+                    ),
+                  ),
                 ),
                 Container(
-                  height: 160,
+                  height: 140,
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
@@ -423,6 +483,28 @@ class _MyVcrPageState extends State<MyVcrPage> with TickerProviderStateMixin {
             ),
           ),
         ]),
+      ),
+    );
+  }
+
+  Widget getClips(info) {
+    return Container(
+      child: Chip(
+        label: Text(
+          info,
+          style: const TextStyle(color: Colors.white, fontSize: 24, height: 1),
+        ),
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.all(Radius.circular(20)),
+        ),
+        side: const BorderSide(width: 2, color: Colors.white),
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+        color: MaterialStateProperty.resolveWith((states) {
+          if (states.contains(MaterialState.pressed)) {
+            return Colors.blue;
+          }
+          return Colors.black;
+        }),
       ),
     );
   }
