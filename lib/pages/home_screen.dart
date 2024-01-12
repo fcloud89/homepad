@@ -60,7 +60,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
         alignment: Alignment.center,
         decoration: const BoxDecoration(
             image: DecorationImage(
-                image: AssetImage("assets/th.webp"), fit: BoxFit.fill)),
+                image: AssetImage("assets/imgs/th.webp"), fit: BoxFit.fill)),
         child: SlidingUpPanel(
           backdropEnabled: true,
           // parallaxEnabled: true,
@@ -95,7 +95,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     SvgPicture.asset(
-                      "assets/ic_i.svg",
+                      "assets/imgs/ic_i.svg",
                       width: 44,
                       height: 44,
                     ),
@@ -138,7 +138,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                   firstChild: Container(
                     decoration: const BoxDecoration(
                         image: DecorationImage(
-                            image: AssetImage("assets/bg_cover.jpg"),
+                            image: AssetImage("assets/imgs/bg_cover.jpg"),
                             fit: BoxFit.fill)),
                     child: Column(
                       children: [
@@ -229,7 +229,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                                               Row(
                                                 children: [
                                                   SvgPicture.asset(
-                                                    "assets/ic_humility.svg",
+                                                    "assets/imgs/ic_humility.svg",
                                                     width: 100,
                                                     height: 100,
                                                     colorFilter:
@@ -384,7 +384,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                       width: 50,
                       alignment: Alignment.center,
                       child: SvgPicture.asset(
-                        "assets/ic_signal_f.svg",
+                        "assets/imgs/ic_signal_f.svg",
                         width: 40,
                         height: 40,
                         colorFilter: const ColorFilter.mode(
@@ -395,7 +395,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                       width: 80,
                       alignment: Alignment.center,
                       child: SvgPicture.asset(
-                        "assets/ic_battery.svg",
+                        "assets/imgs/ic_battery.svg",
                         width: 50,
                         height: 50,
                         colorFilter: const ColorFilter.mode(
@@ -463,7 +463,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
             width: 200,
             height: 200,
             alignment: Alignment.center,
-            child: Image.asset("assets/$icon")),
+            child: Image.asset("assets/imgs/$icon")),
         onTap: () {
           click.call();
         },

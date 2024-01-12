@@ -27,7 +27,7 @@ class MyAreaPage extends StatelessWidget {
             child: Container(
           decoration: const BoxDecoration(
             image: DecorationImage(
-              image: AssetImage('assets/bg_floor.jpg'),
+              image: AssetImage('assets/imgs/bg_floor.jpg'),
               fit: BoxFit.fill,
             ),
           ),
@@ -162,7 +162,7 @@ class _MyAreaPageState extends State<_MyAreaPage>
                                 height: 48,
                                 alignment: Alignment.center,
                                 child: SvgPicture.asset(
-                                  "assets/ic_del.svg",
+                                  "assets/imgs/ic_del.svg",
                                   width: 32,
                                   height: 32,
                                   colorFilter: const ColorFilter.mode(
@@ -271,7 +271,7 @@ class AreaListView extends StatelessWidget {
         child: Row(
           children: [
             SvgPicture.asset(
-              "assets/ic_floor.svg",
+              "assets/imgs/ic_floor.svg",
               width: 40,
               height: 40,
               colorFilter: const ColorFilter.mode(

@@ -66,11 +66,11 @@ class _MyVcrPageState extends State<MyVcrPage> with TickerProviderStateMixin {
     //       "onAIDetectionNotify  uid:${event.uid}  detection:${event.detection}");
     // });
     ritems.clear();
-    var file = File('nb/camlist.json');
+    var file = File('assets/nb/camlist.json');
     file.readAsString().then((String contents) {
       ritems = json.decode(contents) ?? [];
       if (ritems.isNotEmpty) {
-        var dir = Directory('nb/vcr');
+        var dir = Directory('assets/nb/vcr');
         fileList = dir.listSync();
         infos.clear();
         String pathImg = "";
@@ -109,7 +109,7 @@ class _MyVcrPageState extends State<MyVcrPage> with TickerProviderStateMixin {
         decoration: BoxDecoration(
           color: Colors.black.withOpacity(0.5),
           image: const DecorationImage(
-            image: AssetImage('assets/bg_cover.jpg'),
+            image: AssetImage('assets/imgs/bg_cover.jpg'),
             fit: BoxFit.fill,
           ),
         ),
@@ -184,13 +184,14 @@ class _MyVcrPageState extends State<MyVcrPage> with TickerProviderStateMixin {
                           child: Container(
                         decoration: const BoxDecoration(
                             image: DecorationImage(
-                                image: AssetImage('assets/bg_vcr_head.jpg'),
+                                image:
+                                    AssetImage('assets/imgs/bg_vcr_head.jpg'),
                                 fit: BoxFit.fill)),
                       )),
                       Align(
                         alignment: Alignment.bottomCenter,
                         child: Image.asset(
-                          'assets/bg_vcr_divide.jpg',
+                          'assets/imgs/bg_vcr_divide.jpg',
                           width: w,
                           fit: BoxFit.fill,
                         ),
@@ -208,7 +209,7 @@ class _MyVcrPageState extends State<MyVcrPage> with TickerProviderStateMixin {
                             alignment: Alignment.center,
                             padding: const EdgeInsets.only(left: 20, top: 10),
                             child: SvgPicture.asset(
-                              "assets/ic_return.svg",
+                              "assets/imgs/ic_return.svg",
                               width: 30,
                               height: 30,
                               colorFilter: const ColorFilter.mode(
@@ -252,26 +253,13 @@ class _MyVcrPageState extends State<MyVcrPage> with TickerProviderStateMixin {
                             animationController: animationController,
                             listData: infos[index],
                             callBack: () {
-                              for (FileSystemEntity fileSystemEntity
-                                  in fileList) {
-                                String a =
-                                    ritems[index]['uid'].toRadixString(16);
-                                String uid = a.padLeft(8, '0');
-                                if (fileSystemEntity.path.endsWith("mp4") &&
-                                    fileSystemEntity.path.contains(uid)) {
-                                  print(
-                                      "${ritems}  ${index}  ${uid}  ${fileSystemEntity.path}");
-                                  // showDialog<dynamic>(
-                                  //   context: context!,
-                                  //   builder: (BuildContext context) =>
-                                  //       VideoPopupView(
-                                  //           url:
-                                  //               // 'rtsp://admin:Admin123@172.17.33.24:80/ch0_0.264',
-                                  //               // 'assets/video/test.mp4',
-                                  //               fileSystemEntity.path),
-                                  // );
-                                }
-                              }
+                              var v =
+                                  "${infos[index]['img'].toString().split('.')[0]}.mp4";
+                              showDialog<dynamic>(
+                                context: context,
+                                builder: (BuildContext context) =>
+                                    VideoPopupView(url: v),
+                              );
                             },
                           );
                         },
@@ -305,7 +293,7 @@ class _MyVcrPageState extends State<MyVcrPage> with TickerProviderStateMixin {
                         margin: const EdgeInsets.only(right: 80),
                         alignment: Alignment.centerRight,
                         child: SvgPicture.asset(
-                          "assets/ic_signal_f.svg",
+                          "assets/imgs/ic_signal_f.svg",
                           width: 40,
                           height: 40,
                           colorFilter: const ColorFilter.mode(
@@ -320,7 +308,7 @@ class _MyVcrPageState extends State<MyVcrPage> with TickerProviderStateMixin {
                         margin: const EdgeInsets.only(right: 10),
                         alignment: Alignment.centerRight,
                         child: SvgPicture.asset(
-                          "assets/ic_battery.svg",
+                          "assets/imgs/ic_battery.svg",
                           width: 50,
                           height: 50,
                           colorFilter: const ColorFilter.mode(
@@ -379,14 +367,14 @@ class _MyVcrPageState extends State<MyVcrPage> with TickerProviderStateMixin {
                       titleTextStyle: const TextStyle(
                           color: Colors.white, fontSize: 30, height: 1),
                       leftChevronIcon: SvgPicture.asset(
-                        "assets/ic_left.svg",
+                        "assets/imgs/ic_left.svg",
                         width: 30,
                         height: 30,
                         colorFilter: const ColorFilter.mode(
                             Colors.white, BlendMode.srcIn),
                       ),
                       rightChevronIcon: SvgPicture.asset(
-                        "assets/ic_right.svg",
+                        "assets/imgs/ic_right.svg",
                         width: 30,
                         height: 30,
                         colorFilter: const ColorFilter.mode(
@@ -464,17 +452,17 @@ class _MyVcrPageState extends State<MyVcrPage> with TickerProviderStateMixin {
                       Container(
                         height: 100,
                         width: 120,
-                        child: Image.asset('assets/ic_man.png'),
+                        child: Image.asset('assets/imgs/ic_man.png'),
                       ),
                       Container(
                         height: 90,
                         width: 120,
-                        child: Image.asset('assets/ic_dog.png'),
+                        child: Image.asset('assets/imgs/ic_dog.png'),
                       ),
                       Container(
                         height: 90,
                         width: 140,
-                        child: Image.asset('assets/ic_car.png'),
+                        child: Image.asset('assets/imgs/ic_car.png'),
                       ),
                     ],
                   ),
@@ -567,7 +555,7 @@ class HomeListView extends StatelessWidget {
           decoration: BoxDecoration(
             image: listData['pre'] == null
                 ? const DecorationImage(
-                    image: AssetImage('assets/bg.jpg'), fit: BoxFit.fill)
+                    image: AssetImage('assets/imgs/bg.jpg'), fit: BoxFit.fill)
                 : DecorationImage(
                     image: FileImage(File(listData['pre'])), fit: BoxFit.fill),
           ),
@@ -709,7 +697,7 @@ class VcrListView extends StatelessWidget {
                       alignment: Alignment.center,
                       decoration: const BoxDecoration(
                         image: DecorationImage(
-                            image: AssetImage('assets/bg_vcr.jpg'),
+                            image: AssetImage('assets/imgs/bg_vcr.jpg'),
                             fit: BoxFit.cover),
                       ),
                       child: const Text(
@@ -743,12 +731,25 @@ class VcrListView extends StatelessWidget {
                       fontSize: 32,
                     ),
                   ),
-                  Text(
-                    '18:34 5min',
-                    style: TextStyle(
-                      color: Colors.white.withOpacity(0.7),
-                      fontSize: 24,
-                    ),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Text(
+                          '2024-01-12  18:34',
+                          style: TextStyle(
+                            color: Colors.white.withOpacity(0.7),
+                            fontSize: 24,
+                          ),
+                        ),
+                      ),
+                      Text(
+                        '5min',
+                        style: TextStyle(
+                          color: Colors.white.withOpacity(0.7),
+                          fontSize: 24,
+                        ),
+                      ),
+                    ],
                   ),
                   Text(
                     'Human·Vehcle',

@@ -33,20 +33,20 @@ class _MyCameraPageState extends State<MyCameraPage>
     super.initState();
     animationController = AnimationController(
         duration: const Duration(milliseconds: 1000), vsync: this);
-    var file = File('nb/camlist.json');
+    var file = File('assets/nb/camlist.json');
     file.readAsString().then((String contents) {
       infos = json.decode(contents) ?? [];
       if (infos.isNotEmpty) {
         currect = infos[0];
-        controller = VideoPlayerController.networkUrl(Uri.parse(
-            'https://vfx.mtime.cn/Video/2023/12/07/mp4/231207163341437149.mp4'))
+        controller = VideoPlayerController.networkUrl(Uri.parse(currect['url']))
           ..initialize().then((value) {
             controller.play().then((value) {
-              setState(() {});
+              print("****************************************************");
             });
+            setState(() {});
           });
       }
-      fileList = Directory('nb').listSync();
+      fileList = Directory('assets/nb').listSync();
       for (Map info in infos) {
         for (FileSystemEntity fileSystemEntity in fileList) {
           // String a = info['uid'].toRadixString(16);
@@ -83,7 +83,7 @@ class _MyCameraPageState extends State<MyCameraPage>
         decoration: BoxDecoration(
           color: Colors.black.withOpacity(0.5),
           image: const DecorationImage(
-            image: AssetImage('assets/bg_cover.jpg'),
+            image: AssetImage('assets/imgs/bg_cover.jpg'),
             fit: BoxFit.fill,
           ),
         ),
@@ -115,7 +115,7 @@ class _MyCameraPageState extends State<MyCameraPage>
                                   alignment: Alignment.center,
                                   padding: const EdgeInsets.only(bottom: 10),
                                   child: SvgPicture.asset(
-                                    "assets/ic_return.svg",
+                                    "assets/imgs/ic_return.svg",
                                     width: 30,
                                     height: 30,
                                     colorFilter: const ColorFilter.mode(
@@ -141,20 +141,22 @@ class _MyCameraPageState extends State<MyCameraPage>
                             alignment: Alignment.center,
                             decoration: const BoxDecoration(
                               color: Colors.black,
-                              image: DecorationImage(
-                                  image: AssetImage('assets/bg_vcr.jpg'),
-                                  fit: BoxFit.fill),
+                              // image: DecorationImage(
+                              //     image: AssetImage('assets/imgs/bg_vcr.jpg'),
+                              //     fit: BoxFit.fill),
                             ),
-                            child: VideoPlayer(controller),
+                            child: controller.value.isInitialized
+                                ? VideoPlayer(controller)
+                                : SizedBox(),
                           ),
                         ),
                         Expanded(
                           child: Stack(
                             children: [
-                              const Align(
+                              Align(
                                 alignment: Alignment.center,
                                 child: Text(
-                                  'L1 · Doorway · Cam01',
+                                  currect.isEmpty ? '' : currect['loc'],
                                   style: TextStyle(
                                       fontSize: 32,
                                       color: Colors.white,
@@ -169,7 +171,7 @@ class _MyCameraPageState extends State<MyCameraPage>
                                         horizontal: 10, vertical: 10),
                                     margin: const EdgeInsets.only(right: 100),
                                     child: SvgPicture.asset(
-                                      "assets/ic_fullscreen.svg",
+                                      "assets/imgs/ic_fullscreen.svg",
                                       width: 50,
                                       height: 50,
                                       colorFilter: const ColorFilter.mode(
@@ -186,7 +188,7 @@ class _MyCameraPageState extends State<MyCameraPage>
                                     padding: const EdgeInsets.symmetric(
                                         horizontal: 10, vertical: 10),
                                     child: SvgPicture.asset(
-                                      "assets/ic_info.svg",
+                                      "assets/imgs/ic_info.svg",
                                       width: 56,
                                       height: 56,
                                       colorFilter: const ColorFilter.mode(
@@ -225,7 +227,7 @@ class _MyCameraPageState extends State<MyCameraPage>
                         height: 60,
                         alignment: Alignment.center,
                         child: SvgPicture.asset(
-                          "assets/ic_signal_f.svg",
+                          "assets/imgs/ic_signal_f.svg",
                           width: 40,
                           height: 40,
                           colorFilter: const ColorFilter.mode(
@@ -236,7 +238,7 @@ class _MyCameraPageState extends State<MyCameraPage>
                         width: 80,
                         alignment: Alignment.center,
                         child: SvgPicture.asset(
-                          "assets/ic_battery.svg",
+                          "assets/imgs/ic_battery.svg",
                           width: 50,
                           height: 50,
                           colorFilter: const ColorFilter.mode(
@@ -268,7 +270,13 @@ class _MyCameraPageState extends State<MyCameraPage>
                         ),
                       ),
                     ),
-                    onPressed: () {},
+                    onPressed: () {
+                      if (controller.value.isPlaying) {
+                        controller.pause();
+                      } else {
+                        controller.play();
+                      }
+                    },
                   ),
                   Container(
                     height: 6,
@@ -308,10 +316,16 @@ class _MyCameraPageState extends State<MyCameraPage>
                               animation: animation,
                               animationController: animationController,
                               listData: infos[index],
-                              callBack: () {
-                                setState(() {
-                                  currect = infos[index];
-                                });
+                              callBack: () async {
+                                currect = infos[index];
+                                await controller.pause();
+                                await controller.dispose();
+                                controller = VideoPlayerController.networkUrl(
+                                    Uri.parse(currect['url']))
+                                  ..initialize().then((value) {
+                                    controller.play();
+                                    setState(() {});
+                                  });
                               },
                             );
                           },
@@ -458,7 +472,7 @@ class HomeListView extends StatelessWidget {
         decoration: BoxDecoration(
           image: listData['pre'] == null
               ? const DecorationImage(
-                  image: AssetImage('assets/bg_vcr.jpg'), fit: BoxFit.fill)
+                  image: AssetImage('assets/imgs/bg_vcr.jpg'), fit: BoxFit.fill)
               : DecorationImage(
                   image: FileImage(File(listData['pre'])), fit: BoxFit.fill),
         ),

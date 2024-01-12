@@ -1,6 +1,7 @@
 import 'package:bot_toast/bot_toast.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_neumorphic_plus/flutter_neumorphic.dart';
+import 'package:homepad/db/DatabaseHelper.dart';
 import 'package:homepad/pages/home_screen.dart';
 import 'package:homepad/utils/AppLocale.dart';
 import 'package:responsive_builder/responsive_builder.dart';
@@ -38,7 +39,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   @override
   void initState() {
     WidgetsBinding.instance.addObserver(this);
-
+    // DatabaseHelper _databaseHelper = DatabaseHelper();
     super.initState();
   }
 
@@ -60,7 +61,6 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
     );
   }
 
-  /// 生命周期发生变化时，会调用该方法
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     super.didChangeAppLifecycleState(state);

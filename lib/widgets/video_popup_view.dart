@@ -76,7 +76,7 @@ class _VideoPopupViewState extends State<VideoPopupView>
                         ),
                       ),
                       SvgPicture.asset(
-                        "assets/ic_close.svg",
+                        "assets/imgs/ic_close.svg",
                         width: 50,
                         height: 50,
                         colorFilter: const ColorFilter.mode(

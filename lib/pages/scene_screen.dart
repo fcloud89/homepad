@@ -27,7 +27,7 @@ class MyScenePage extends StatelessWidget {
             child: Container(
           decoration: const BoxDecoration(
             image: DecorationImage(
-              image: AssetImage('assets/bg_floor.jpg'),
+              image: AssetImage('assets/imgs/bg_floor.jpg'),
               fit: BoxFit.fill,
             ),
           ),
