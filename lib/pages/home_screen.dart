@@ -136,6 +136,8 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                       ? CrossFadeState.showFirst
                       : CrossFadeState.showSecond,
                   firstChild: Container(
+                    width: w,
+                    height: h,
                     decoration: const BoxDecoration(
                         image: DecorationImage(
                             image: AssetImage("assets/imgs/bg_cover.jpg"),

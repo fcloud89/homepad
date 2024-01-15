@@ -38,9 +38,9 @@ class _MyVcrPageState extends State<MyVcrPage> with TickerProviderStateMixin {
   AnimationController? animationController;
   // late DBusClient dbClient;
   late ComSmarthomeNbwareGraph object;
-  late StreamSubscription connectSS;
-  late StreamSubscription recordSS;
-  late StreamSubscription aiSS;
+  // late StreamSubscription connectSS;
+  // late StreamSubscription recordSS;
+  // late StreamSubscription aiSS;
   List<FileSystemEntity> fileList = [];
   DateTime? _selectedDay;
   DateTime? _focusedDay;
@@ -278,12 +278,10 @@ class _MyVcrPageState extends State<MyVcrPage> with TickerProviderStateMixin {
                 Stack(
                   alignment: Alignment.center,
                   children: [
-                    const Expanded(
-                      child: Text(
-                        "02:05  am",
-                        textAlign: TextAlign.center,
-                        style: TextStyle(color: Colors.white, fontSize: 20),
-                      ),
+                    const Text(
+                      "02:05  am",
+                      textAlign: TextAlign.center,
+                      style: TextStyle(color: Colors.white, fontSize: 20),
                     ),
                     Align(
                       alignment: Alignment.centerRight,
@@ -415,9 +413,7 @@ class _MyVcrPageState extends State<MyVcrPage> with TickerProviderStateMixin {
                               fontSize: 28,
                               fontWeight: FontWeight.bold),
                         ),
-                        SizedBox(
-                          height: 10,
-                        ),
+                        const SizedBox(height: 10),
                         Wrap(
                           spacing: 10,
                           runSpacing: 10,
@@ -444,22 +440,22 @@ class _MyVcrPageState extends State<MyVcrPage> with TickerProviderStateMixin {
                     ),
                   ),
                 ),
-                Container(
+                SizedBox(
                   height: 140,
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Container(
+                      SizedBox(
                         height: 100,
                         width: 120,
                         child: Image.asset('assets/imgs/ic_man.png'),
                       ),
-                      Container(
+                      SizedBox(
                         height: 90,
                         width: 120,
                         child: Image.asset('assets/imgs/ic_dog.png'),
                       ),
-                      Container(
+                      SizedBox(
                         height: 90,
                         width: 140,
                         child: Image.asset('assets/imgs/ic_car.png'),
@@ -500,9 +496,9 @@ class _MyVcrPageState extends State<MyVcrPage> with TickerProviderStateMixin {
   @override
   void dispose() {
     super.dispose();
-    connectSS.cancel();
-    recordSS.cancel();
-    aiSS.cancel();
+    // connectSS.cancel();
+    // recordSS.cancel();
+    // aiSS.cancel();
   }
 }
 
